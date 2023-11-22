@@ -2,6 +2,7 @@
 #include "config.h"
 #include "clock.h"
 #include "processor.h"
+#include "events.h"
 
 
 int main(int argc, char *argv[])
@@ -22,13 +23,13 @@ int main(int argc, char *argv[])
 	clock_init(&clock);
 	while (running)
 	{
-		if (fetch(&hw, instruction) && execute(&hw, instruction))
+		if (fetch(&hw, instruction) && execute(&hw, instruction) && !events_check_quit())
 		{
 			clock_tick(&clock);
 		}
 		else
 		{
-			/* Either reached end of memory or instruction failed */
+			/* Either reached end of memory, instruction failed, or got a quit signal */
 			running = 0;
 		}
 
