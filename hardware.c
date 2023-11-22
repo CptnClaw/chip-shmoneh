@@ -7,12 +7,18 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 	hw->pc = MEM_LOC_PROG;
 	hw->index = 0;
 	stack_init(&(hw->stack));
+	graphics_init(&(hw->gfx), rom_path);
 	hw->rom_size = load_rom(rom_path, hw->memory);
 	if (!hw->rom_size && !load_font(hw->memory))
 	{
 		return 0;
 	}
 	return 1;
+}
+
+void hardware_free(struct Hardware *hw)
+{
+	graphics_free(&(hw->gfx));
 }
 
 int load_font(uint8_t *memory)

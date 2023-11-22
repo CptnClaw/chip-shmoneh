@@ -19,9 +19,10 @@ struct Hardware
 	/* sound timer */
 	uint8_t variables[16];
 	struct Stack stack;
-	struct Graphics graphics;
+	struct Graphics gfx;
 };
 
 int hardware_init(struct Hardware *hw, char *rom_path);
+void hardware_free(struct Hardware *hw);
 int load_font(uint8_t *memory);
 uint16_t load_rom(char *rom_path, uint8_t *memory);

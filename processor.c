@@ -42,7 +42,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 			{
 				return error_msg(instruction);
 			}
-			graphics_clear(&hw->graphics);
+			graphics_clear(&hw->gfx);
 			break;
 
 		/* 1NNN Jump */
