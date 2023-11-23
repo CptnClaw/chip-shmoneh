@@ -33,7 +33,7 @@ int error_msg(uint8_t *instruction)
 
 int execute(struct Hardware *hw, uint8_t *instruction)
 {
-	print_inst(instruction);
+	/* print_inst(instruction); */
 	switch (OPCODE(instruction)) {
 
 		/* 0E00 Clear screen */
@@ -67,6 +67,11 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 
 		/* DXYN Display */
 		case 0xD:
+			graphics_draw(&hw->gfx, 
+					hw->variables[X(instruction)],
+					hw->variables[Y(instruction)],
+					hw->memory + hw->index,
+					N(instruction));
 			break;
 	
 		default:

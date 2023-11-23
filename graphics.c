@@ -5,20 +5,7 @@
 
 #define LOGICAL_DISPLAY_W 64
 #define LOGICAL_DISPLAY_H 32
-#define WINDOW_TITLE "chip-shmoneh"
 
-void graphics_clear(struct Graphics *gfx)
-{
-	SDL_Rect dst_rect = {0, 0, gfx->display_w, gfx->display_h};
-	SDL_RenderClear(gfx->renderer);
-	SDL_RenderPresent(gfx->renderer);
-}
-
-void graphics_draw(struct Graphics *gfx, uint8_t x, uint8_t y, uint8_t n)
-{
-	/* SDL_UpdateTexture(texture, NULL, pixels, sizeof(uint32_t) * visual_screen_w); */
-	/* SDL_RenderCopy(renderer, texture, NULL, &dst_rect); */
-}
 
 void graphics_init(struct Graphics *gfx, char *window_title)
 {
@@ -27,6 +14,8 @@ void graphics_init(struct Graphics *gfx, char *window_title)
 	
 	gfx->display_w = LOGICAL_DISPLAY_W * DISPLAY_SCALE;
 	gfx->display_h = LOGICAL_DISPLAY_H * DISPLAY_SCALE;
+	SDL_Rect dr = {0, 0, gfx->display_w, gfx->display_h};
+	gfx->display_rect = dr;
 	gfx->pixels = malloc(sizeof(uint32_t) * gfx->display_h * gfx->display_w);
 
 	gfx->window = SDL_CreateWindow(window_title, 
@@ -50,66 +39,57 @@ void graphics_free(struct Graphics *gfx)
 	SDL_Quit();
 }
 
-
-void demo(int screen_scale)
+void graphics_clear(struct Graphics *gfx)
 {
-
-
-
-/* 	SDL_Event event; */
-/* 	int quit = 0; */
-/* 	int count = 0; */
-
-
-/* 	while (!quit) */
-/* 	{ */
-/* 		SDL_PollEvent(&event); */
-/* 		switch (event.type) */
-/* 		{ */
-/* 			case SDL_QUIT: */
-/* 				quit = 1; */
-/* 				break; */
-/* 			case SDL_KEYDOWN: */
-/* 				switch (event.key.keysym.sym) */
-/* 				{ */
-/* 					case SDLK_ESCAPE: quit = 1; break; */
-/* 				} */
-/* 				break; */
-/* 		} */
-
-/* 		/1* SDL_Delay(2); *1/ */
-/* 		if (count < logical_screen_w * logical_screen_h) */
-/* 		{ */
-/* 			int loc_y = count / logical_screen_w; */
-/* 			int loc_x = count % logical_screen_w + loc_y % 2; */
-/* 			flip_pixel(loc_x, loc_y, pixels, logical_screen_w, logical_screen_h, screen_scale); */
-/* 			count += 2; */
-/* 		} */
-/* 		else */
-/* 		{ */
-/* 			count = 0; */
-/* 		} */
-
-/* 	} */
-
+	for (int i=0; i<gfx->display_h * gfx->display_w; i++)
+	{
+		gfx->pixels[i] = 0;
+	}
+	SDL_RenderClear(gfx->renderer);
+	SDL_RenderPresent(gfx->renderer);
 }
 
-void flip_pixel(int x, int y, uint32_t *pixels, int w, int h, int screen_scale)
+void flip_pixel(uint32_t *pixels, int x, int y)
 {
-	int vis_x = x * screen_scale;
-	int vis_y = y * screen_scale;
-	int vis_w = w * screen_scale;
+	int vis_x = x * DISPLAY_SCALE;
+	int vis_y = y * DISPLAY_SCALE;
+	int vis_w = LOGICAL_DISPLAY_W * DISPLAY_SCALE;
 
 	uint32_t cur_val = pixels[vis_y * vis_w + vis_x];
 	uint32_t new_val = 0;
 	if (cur_val == 0)	new_val = -1;
 	
-	for (int i = 0 ; i < screen_scale ; i++)
+	for (int i = 0 ; i < DISPLAY_SCALE ; i++)
 	{
-		for (int j = 0 ; j < screen_scale ; j++)
+		for (int j = 0 ; j < DISPLAY_SCALE ; j++)
 		{
 			pixels[(vis_y+i)*vis_w + (vis_x+j)] = new_val;
 		}
 	}
 }
+
+void draw_sprite_line(uint32_t *pixels, int x, int y, uint8_t line)
+{
+	for (uint8_t j=0; j<8; j++)
+	{
+		if ((line & (128 >> j)) != 0)
+		{
+			flip_pixel(pixels, x+j, y);
+		}
+	}
+}
+
+void graphics_draw(struct Graphics *gfx, uint8_t x, uint8_t y, uint8_t *sprite, uint8_t sprite_height)
+{
+	x = x % LOGICAL_DISPLAY_W;
+	y = y % LOGICAL_DISPLAY_H;
+	for (uint8_t i=0; i<sprite_height; i++)
+	{
+		draw_sprite_line(gfx->pixels, x, y+i, *(sprite+i));
+	}
+	SDL_UpdateTexture(gfx->texture, NULL, gfx->pixels, sizeof(uint32_t) * gfx->display_w);
+	SDL_RenderCopy(gfx->renderer, gfx->texture, NULL, &(gfx->display_rect));
+	SDL_RenderPresent(gfx->renderer);
+}
+
 
