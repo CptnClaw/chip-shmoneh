@@ -35,6 +35,5 @@ int main(int argc, char *argv[])
 
 	}
 	hardware_free(&hw);
-	/* demo(10); */
 	return 0;
 }
