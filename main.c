@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	clock_init(&clock);
 	while (running)
 	{
-		if (fetch(&hw, instruction) && execute(&hw, instruction) && !events_check_quit())
+		if (fetch(&hw, instruction) && execute(&hw, instruction) && events_handle(&hw))
 		{
 			clock_tick(&clock);
 		}

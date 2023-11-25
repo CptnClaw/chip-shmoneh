@@ -1,4 +1,6 @@
 #include <sys/stat.h>
+#include <time.h>
+#include <stdlib.h>
 #include "hardware.h"
 #include "font.h"
 
@@ -13,6 +15,7 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 	{
 		return 0;
 	}
+	srand(time(NULL));
 	return 1;
 }
 
@@ -57,3 +60,36 @@ uint16_t load_rom(char *rom_path, uint8_t *memory)
 	fclose(rom_file);
 	return (uint16_t)rom_size;
 }
+
+uint16_t gen_random()
+{
+	return (uint16_t)rand();
+}
+
+void keyboard_down(struct Hardware *hw, int key)
+{
+	hw->keyboard[key] = 1;
+}
+
+void keyboard_up(struct Hardware *hw, int key)
+{
+	hw->keyboard[key] = 0;
+}
+
+int is_key_pressed(struct Hardware *hw, int key)
+{
+	return (hw->keyboard[key] == 1);
+}
+
+int is_any_key_pressed(struct Hardware *hw)
+{
+	for (int i=0; i<16; i++)
+	{
+		if (hw->keyboard[i] == 1)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+

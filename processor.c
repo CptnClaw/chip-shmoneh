@@ -31,8 +31,15 @@ int error_msg(uint8_t *instruction)
 	return 0;
 }
 
+int error_config(char *field)
+{
+	printf("Error: miconfigured %s", field);
+	return 0;
+}
+
 int execute(struct Hardware *hw, uint8_t *instruction)
 {
+	int key;
 	/* print_inst(instruction); */
 	switch (OPCODE(instruction)) {
 
@@ -104,6 +111,16 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 			}
 			break;
 
+		/* 6XNN Set */
+		case 0x6: 
+			hw->variables[X(instruction)] = NN(instruction);
+			break;
+
+		/* 7XNN Add */
+		case 0x7:
+			hw->variables[X(instruction)] += NN(instruction);
+			break;
+
 		/* Logical and arithmetic instructions */
 		case 0x8:
 			break;
@@ -135,9 +152,9 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					/* Set flag=1 if overflow, flag=0 otherwise */
 					hw->variables[FLAG_REG] =
 						(hw->variables[X(instruction)] > 
-						0xFF - hw->variables[Y(instruction)]) 
+						0xFF - hw->variables[Y(instruction)]);
 					break;
-				/* 8XY5 Subtract (I) */
+				/* 8XY5 Subtract (X=X-Y) */
 				case 0x5:
 					hw->variables[X(instruction)] =
 						hw->variables[X(instruction)] -
@@ -145,9 +162,9 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					/* Set flag=1 if overflow, flag=0 otherwise */
 					hw->variables[FLAG_REG] =
 						(hw->variables[X(instruction)] >=
-						 hw->variables[Y(instruction)])
+						 hw->variables[Y(instruction)]);
 					break;
-				/* 8XY7 Subtract (II) */
+				/* 8XY7 Subtract (X=Y-X) */
 				case 0x7:
 					hw->variables[X(instruction)] =
 						hw->variables[Y(instruction)] -
@@ -155,31 +172,73 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					/* Set flag=1 if overflow, flag=0 otherwise */
 					hw->variables[FLAG_REG] =
 						(hw->variables[Y(instruction)] >=
-						 hw->variables[X(instruction)])
+						 hw->variables[X(instruction)]);
 					break;
 				/* 8XY6 Shift (right) */
 				case 0x6:
+					switch (SHIFT_BEHAVIOR) 
+					{
+						case 0:
+							hw->variables[X(instruction)] =
+								hw->variables[Y(instruction)];
+							break;
+						case 1:
+							/* Do nothing */
+							break;
+						default:
+							return error_config("SHIFT_BEHAVIOR");
+					}
+					hw->variables[FLAG_REG] = 
+						hw->variables[X(instruction)] >> 7;
+					hw->variables[X(instruction)] <<= 1;
 					break;
 				/* 8XYE Shift (left) */
 				case 0xE:
+					switch (SHIFT_BEHAVIOR) 
+					{
+						case 0:
+							hw->variables[X(instruction)] =
+								hw->variables[Y(instruction)];
+							break;
+						case 1:
+							/* Do nothing */
+							break;
+						default:
+							return error_config("SHIFT_BEHAVIOR");
+					}
+					hw->variables[FLAG_REG] = 
+						hw->variables[X(instruction)] & 1;
+					hw->variables[X(instruction)] >>= 1;
 					break;
 				default:
 					return error_msg(instruction);
 			}
 
-		/* 6XNN Set */
-		case 0x6: 
-			hw->variables[X(instruction)] = NN(instruction);
-			break;
-
-		/* 7XNN Add */
-		case 0x7:
-			hw->variables[X(instruction)] += NN(instruction);
-			break;
-
 		/* ANNN Set index */
 		case 0xA:
 			hw->index = NNN(instruction);
+			break;
+
+		/* BNNN Jump with offset */
+		case 0xB:
+			hw->pc = NNN(instruction);
+			switch (JUMP_OFFSET_BEHAVIOR)
+			{
+				case 0:
+					hw->pc += hw->variables[0];
+					break;
+				case 1:
+					hw->pc += hw->variables[X(instruction)];
+					break;
+				default:
+					return error_config("JUMP_OFFSET_BEHAVIOR");
+			}
+			break;
+
+		/* CXNN Random */
+		case 0xC:
+			hw->variables[X(instruction)] =
+				gen_random() & NNN(instruction);
 			break;
 
 		/* DXYN Display */
@@ -189,6 +248,60 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					hw->variables[Y(instruction)],
 					hw->memory + hw->index,
 					N(instruction));
+			break;
+
+		case 0xE:
+			switch (NN(instruction))
+			{
+				/* EX9E Skip if key (pressed) */
+				case 0x9E:
+					if (is_key_pressed(hw, hw->variables[X(instruction)]))
+					{
+						hw->pc += 2;
+					}
+					break;
+				/* EXA1 Skip if key (not pressed) */ 
+				case 0xA1:
+					if (!is_key_pressed(hw, hw->variables[X(instruction)]))
+					{
+						hw->pc += 2;
+					}
+					break;
+				default:
+					return error_msg(instruction);
+			}
+			break;
+
+		case 0xF:
+			switch (NN(instruction))
+			{
+				case 0x07: break;
+				case 0x15: break;
+				case 0x18: break;
+				case 0x1E: break;
+				/* 0xFX0A Get key */
+				case 0x0A:
+					key = is_any_key_pressed(hw);
+					if (key == -1)
+					{
+						hw->pc -= 2;
+					}
+					else
+					{
+						hw->variables[X(instruction)] = key;
+					}
+					break;
+				/* FX29 Font character */
+				case 0x29: break;
+				/* FX33 Binary-coded decimal conversion */
+				case 0x33: break;
+				/* FX55 Store memory */
+				case 0x55: break;
+				/* FX65 Load memory */
+				case 0x65: break;
+				default:
+					return error_msg(instruction);
+			}
 			break;
 	
 		default:
