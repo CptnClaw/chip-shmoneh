@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include "stack.h"
+
 
 void stack_init(struct Stack *stack)
 {
@@ -18,12 +20,12 @@ int stack_push(struct Stack *stack, uint16_t item)
 
 int stack_pop(struct Stack *stack, uint16_t *item)
 {
+	stack->index--;
 	if (stack->index < 0)
 	{
 		return 0;
 	}
-	item = &(stack->data[stack->index]);
-	stack->index--;
+	*(item) = stack->data[stack->index];
 	return 1;
 }
 

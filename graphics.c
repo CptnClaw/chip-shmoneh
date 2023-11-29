@@ -49,15 +49,17 @@ void graphics_clear(struct Graphics *gfx)
 	SDL_RenderPresent(gfx->renderer);
 }
 
-void flip_pixel(uint32_t *pixels, int x, int y)
+uint8_t flip_pixel(uint32_t *pixels, int x, int y)
 {
 	int vis_x = x * DISPLAY_SCALE;
 	int vis_y = y * DISPLAY_SCALE;
 	int vis_w = LOGICAL_DISPLAY_W * DISPLAY_SCALE;
+	uint8_t has_collision = 0;
 
 	uint32_t cur_val = pixels[vis_y * vis_w + vis_x];
 	uint32_t new_val = 0;
 	if (cur_val == 0)	new_val = -1;
+	else				has_collision = 1;
 	
 	for (int i = 0 ; i < DISPLAY_SCALE ; i++)
 	{
@@ -66,26 +68,30 @@ void flip_pixel(uint32_t *pixels, int x, int y)
 			pixels[(vis_y+i)*vis_w + (vis_x+j)] = new_val;
 		}
 	}
+	return has_collision;
 }
 
-void draw_sprite_line(uint32_t *pixels, int x, int y, uint8_t line)
+uint8_t draw_sprite_line(uint32_t *pixels, int x, int y, uint8_t line)
 {
+	uint8_t has_collision = 0;
 	for (uint8_t j=0; j<8; j++)
 	{
 		if ((line & (128 >> j)) != 0)
 		{
-			flip_pixel(pixels, x+j, y);
+			has_collision |= flip_pixel(pixels, x+j, y);
 		}
 	}
+	return has_collision;
 }
 
-void graphics_draw(struct Graphics *gfx, uint8_t x, uint8_t y, uint8_t *sprite, uint8_t sprite_height)
+void graphics_draw(struct Graphics *gfx, uint8_t x, uint8_t y, uint8_t *sprite, uint8_t sprite_height, uint8_t *collision)
 {
 	x = x % LOGICAL_DISPLAY_W;
 	y = y % LOGICAL_DISPLAY_H;
+	(*collision) = 0;
 	for (uint8_t i=0; i<sprite_height; i++)
 	{
-		draw_sprite_line(gfx->pixels, x, y+i, *(sprite+i));
+		(*collision) |= draw_sprite_line(gfx->pixels, x, y+i, *(sprite+i));
 	}
 	SDL_UpdateTexture(gfx->texture, NULL, gfx->pixels, sizeof(uint32_t) * gfx->display_w);
 	SDL_RenderCopy(gfx->renderer, gfx->texture, NULL, &(gfx->display_rect));

@@ -1,4 +1,8 @@
 #include "processor.h"
+#include "debug.h"
+
+#define VX (hw->variables[X(instruction)])
+#define VY (hw->variables[Y(instruction)])
 
 int fetch(struct Hardware *hw, uint8_t *instruction)
 {
@@ -6,23 +10,17 @@ int fetch(struct Hardware *hw, uint8_t *instruction)
 	{
 		return 0;
 	}
+
+	if (DEBUG >= 1)
+	{
+		printf("%.4X ||| ", hw->pc);
+	}
+
 	instruction[0] = hw->memory[hw->pc];
 	hw->pc++;
 	instruction[1] = hw->memory[hw->pc];
 	hw->pc++;
 	return 1;
-}
-
-void print_inst(uint8_t *instruction)
-{
-	printf("%.4X ||| OP:%X X:%X Y:%X N:%X NN:%.2X NNN:%.3X\n",
-			WHOLE(instruction),
-			OPCODE(instruction),
-			X(instruction),
-			Y(instruction),
-			N(instruction),
-			NN(instruction),
-			NNN(instruction));
 }
 
 int error_msg(uint8_t *instruction)
@@ -40,7 +38,11 @@ int error_config(char *field)
 int execute(struct Hardware *hw, uint8_t *instruction)
 {
 	int key;
-	/* print_inst(instruction); */
+	int temp;
+	if (DEBUG >=1)
+	{
+		print_inst(instruction);
+	}
 	switch (OPCODE(instruction)) {
 
 		case 0x0: 
@@ -73,7 +75,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 
 		/* 3XNN Skip (if VX == NN) */
 		case 0x3:
-			if (hw->variables[X(instruction)] == NNN(instruction))
+			if (hw->variables[X(instruction)] == NN(instruction))
 			{
 				hw->pc += 2;
 			}
@@ -81,7 +83,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 
 		/* 4XNN Skip (if VX != NN) */
 		case 0x4:
-			if (hw->variables[X(instruction)] != NNN(instruction))
+			if (hw->variables[X(instruction)] != NN(instruction))
 			{
 				hw->pc += 2;
 			}
@@ -123,7 +125,6 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 
 		/* Logical and arithmetic instructions */
 		case 0x8:
-			break;
 			switch (N(instruction)) {
 				/* 8XY0 Set */ 
 				case 0x0:
@@ -189,8 +190,8 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 							return error_config("SHIFT_BEHAVIOR");
 					}
 					hw->variables[FLAG_REG] = 
-						hw->variables[X(instruction)] >> 7;
-					hw->variables[X(instruction)] <<= 1;
+						hw->variables[X(instruction)] & 1;
+					hw->variables[X(instruction)] >>= 1;
 					break;
 				/* 8XYE Shift (left) */
 				case 0xE:
@@ -207,12 +208,13 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 							return error_config("SHIFT_BEHAVIOR");
 					}
 					hw->variables[FLAG_REG] = 
-						hw->variables[X(instruction)] & 1;
-					hw->variables[X(instruction)] >>= 1;
+						hw->variables[X(instruction)] >> 7;
+					hw->variables[X(instruction)] <<= 1;
 					break;
 				default:
 					return error_msg(instruction);
 			}
+			break;
 
 		/* ANNN Set index */
 		case 0xA:
@@ -247,7 +249,8 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					hw->variables[X(instruction)],
 					hw->variables[Y(instruction)],
 					hw->memory + hw->index,
-					N(instruction));
+					N(instruction),
+					&(hw->variables[FLAG_REG]));
 			break;
 
 		case 0xE:
@@ -275,15 +278,35 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 		case 0xF:
 			switch (NN(instruction))
 			{
-				case 0x07: break;
-				case 0x15: break;
-				case 0x18: break;
-				case 0x1E: break;
+				/* FX07 Timer (get delay) */
+				case 0x07: 
+					hw->variables[X(instruction)] = timer_delay_get(hw);
+					break;
+				/* FX15 Timer (set delay) */
+				case 0x15: 
+					timer_delay_set(hw, hw->variables[X(instruction)]);
+					break;
+				/* FX18 Timer (set sound) */
+				case 0x18:
+					timer_sound_set(hw, hw->variables[X(instruction)]);
+					break;
+				/* FX1E Add to index */
+				case 0x1E: 
+					if (ADD_INDEX_BEHAVIOR == 1 &&
+						hw->variables[X(instruction)] >
+						0x0FFF - hw->index)
+					{
+						/* Overflow of index above 0x0FFF */
+						hw->variables[FLAG_REG] = 1;
+					}
+					hw->index += hw->variables[X(instruction)];
+					break;
 				/* 0xFX0A Get key */
 				case 0x0A:
 					key = is_any_key_pressed(hw);
 					if (key == -1)
 					{
+						/* No key is pressed, go back (try again) */
 						hw->pc -= 2;
 					}
 					else
@@ -292,20 +315,47 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					}
 					break;
 				/* FX29 Font character */
-				case 0x29: break;
+				case 0x29: 
+					hw->index = MEM_LOC_FONT + 
+						(hw->variables[X(instruction)] * FONT_WIDTH);
+					break;
 				/* FX33 Binary-coded decimal conversion */
-				case 0x33: break;
+				case 0x33: 
+					temp = hw->variables[X(instruction)];
+					hw->memory[hw->index] = temp / 100;
+					temp = temp % 100;
+					hw->memory[hw->index + 1] = temp / 10;
+					temp = temp % 10;
+					hw->memory[hw->index + 2] = temp;
+					break;
 				/* FX55 Store memory */
-				case 0x55: break;
+				case 0x55: 
+					for (int i=0; i<=X(instruction); i++)
+					{
+						hw->memory[hw->index + i] = hw->variables[i];
+					}
+					if (STORE_MEM_BEHAVIOR == 0)
+					{
+						hw->index += X(instruction) + 1;
+					}
+					break;
 				/* FX65 Load memory */
-				case 0x65: break;
+				case 0x65: 
+					for (int i=0; i<=X(instruction); i++)
+					{
+						hw->variables[i] = hw->memory[hw->index + i];
+					}
+					if (STORE_MEM_BEHAVIOR == 0)
+					{
+						hw->index += X(instruction) + 1;
+					}
+					break;
 				default:
 					return error_msg(instruction);
 			}
 			break;
 	
 		default:
-			return 1;  /* TODO: Remove */
 			return error_msg(instruction);
 	}
 	return 1;

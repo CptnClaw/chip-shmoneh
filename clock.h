@@ -2,7 +2,7 @@
 
 struct Clock
 {
-	Uint16 timer;
+	Uint64 timer;
 	int num_ticks;
 };
 

@@ -9,6 +9,8 @@
 #define MEM_LOC_FONT 0x050
 #define MEM_LOC_PROG 0x200
 #define is_prog_size_ok(rom_size)	( (rom_size) + MEM_LOC_PROG <= MEM_SIZE ? 1 : 0)
+#define FONT_WIDTH 5
+#define TIMERS_RATE 60  /* in Hz (updates per second) */
 
 struct Hardware
 {
@@ -19,8 +21,8 @@ struct Hardware
 	/* Registers */
 	uint16_t pc;
 	uint16_t index;
-	/* delay timer */
-	/* sound timer */
+	Uint64 timer_delay;
+	Uint64 timer_sound;
 	uint8_t variables[16];
 	struct Stack stack;
 
@@ -38,6 +40,9 @@ void keyboard_down(struct Hardware *hw, int key);
 void keyboard_up(struct Hardware *hw, int key);
 int is_key_pressed(struct Hardware *hw, int key);
 int is_any_key_pressed(struct Hardware *hw);
+uint8_t timer_delay_get(struct Hardware *hw);
+void timer_delay_set(struct Hardware *hw, uint8_t amount);
+void timer_sound_set(struct Hardware *hw, uint8_t amount);
 
 
 #endif /* ifndef _HARDWARE_ */

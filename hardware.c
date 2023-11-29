@@ -4,10 +4,15 @@
 #include "hardware.h"
 #include "font.h"
 
+#define MS_TO_TIMER(ms)		((ms) * TIMERS_RATE / 1000)
+#define TIMER_TO_MS(amt)	((amt) * 1000 / TIMERS_RATE)
+
 int hardware_init(struct Hardware *hw, char *rom_path)
 {
 	hw->pc = MEM_LOC_PROG;
 	hw->index = 0;
+	hw->timer_delay = 0;
+	hw->timer_sound = 0;
 	stack_init(&(hw->stack));
 	graphics_init(&(hw->gfx), rom_path);
 	hw->rom_size = load_rom(rom_path, hw->memory);
@@ -93,3 +98,23 @@ int is_any_key_pressed(struct Hardware *hw)
 	return -1;
 }
 
+uint8_t timer_delay_get(struct Hardware *hw)
+{
+	Uint64 now = SDL_GetTicks64();
+	if (now > hw->timer_delay)
+	{
+		return 0;
+	}
+	Uint64 diff = now - hw->timer_delay;
+	return (uint8_t)(MS_TO_TIMER(diff));
+}
+
+void timer_delay_set(struct Hardware *hw, uint8_t amount)
+{
+	hw->timer_delay = SDL_GetTicks64() + TIMER_TO_MS(amount);
+}
+
+void timer_sound_set(struct Hardware *hw, uint8_t amount)
+{
+	hw->timer_sound = SDL_GetTicks64() + TIMER_TO_MS(amount);
+}
