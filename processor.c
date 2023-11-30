@@ -148,32 +148,32 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					break;
 				/* 8XY4 Add */ 
 				case 0x4:
+					/* Set flag=1 if overflow, flag=0 otherwise */
+					temp = (hw->variables[X(instruction)] > 
+						0xFF - hw->variables[Y(instruction)]);
 					hw->variables[X(instruction)] +=
 						hw->variables[Y(instruction)];
-					/* Set flag=1 if overflow, flag=0 otherwise */
-					hw->variables[FLAG_REG] =
-						(hw->variables[X(instruction)] > 
-						0xFF - hw->variables[Y(instruction)]);
+					hw->variables[FLAG_REG] = temp;
 					break;
 				/* 8XY5 Subtract (X=X-Y) */
 				case 0x5:
+					/* Set flag=1 if overflow, flag=0 otherwise */
+					temp = (hw->variables[X(instruction)] >=
+						 hw->variables[Y(instruction)]);
 					hw->variables[X(instruction)] =
 						hw->variables[X(instruction)] -
 						hw->variables[Y(instruction)];
-					/* Set flag=1 if overflow, flag=0 otherwise */
-					hw->variables[FLAG_REG] =
-						(hw->variables[X(instruction)] >=
-						 hw->variables[Y(instruction)]);
+					hw->variables[FLAG_REG] = temp;
 					break;
 				/* 8XY7 Subtract (X=Y-X) */
 				case 0x7:
+					/* Set flag=1 if overflow, flag=0 otherwise */
+					temp = (hw->variables[Y(instruction)] >=
+						 hw->variables[X(instruction)]);
 					hw->variables[X(instruction)] =
 						hw->variables[Y(instruction)] -
 						hw->variables[X(instruction)];
-					/* Set flag=1 if overflow, flag=0 otherwise */
-					hw->variables[FLAG_REG] =
-						(hw->variables[Y(instruction)] >=
-						 hw->variables[X(instruction)]);
+					hw->variables[FLAG_REG] = temp;
 					break;
 				/* 8XY6 Shift (right) */
 				case 0x6:
@@ -189,9 +189,9 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 						default:
 							return error_config("SHIFT_BEHAVIOR");
 					}
-					hw->variables[FLAG_REG] = 
-						hw->variables[X(instruction)] & 1;
+					temp = hw->variables[X(instruction)] & 1;
 					hw->variables[X(instruction)] >>= 1;
+					hw->variables[FLAG_REG] = temp;
 					break;
 				/* 8XYE Shift (left) */
 				case 0xE:
@@ -207,9 +207,9 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 						default:
 							return error_config("SHIFT_BEHAVIOR");
 					}
-					hw->variables[FLAG_REG] = 
-						hw->variables[X(instruction)] >> 7;
+					temp = hw->variables[X(instruction)] >> 7;
 					hw->variables[X(instruction)] <<= 1;
+					hw->variables[FLAG_REG] = temp;
 					break;
 				default:
 					return error_msg(instruction);
