@@ -135,16 +135,28 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 				case 0x1:
 					hw->variables[X(instruction)] |=
 						hw->variables[Y(instruction)];
+					if (LOGIC_FLAG_BEHAVIOR == 0) 
+					{
+						hw->variables[FLAG_REG] = 0;
+					}
 					break;
 				/* 8XY2 AND */
 				case 0x2:
 					hw->variables[X(instruction)] &=
 						hw->variables[Y(instruction)];
+					if (LOGIC_FLAG_BEHAVIOR == 0) 
+					{
+						hw->variables[FLAG_REG] = 0;
+					}
 					break;
 				/* 8XY3 XOR */
 				case 0x3:
 					hw->variables[X(instruction)] ^=
 						hw->variables[Y(instruction)];
+					if (LOGIC_FLAG_BEHAVIOR == 0) 
+					{
+						hw->variables[FLAG_REG] = 0;
+					}
 					break;
 				/* 8XY4 Add */ 
 				case 0x4:
