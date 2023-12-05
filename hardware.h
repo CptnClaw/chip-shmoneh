@@ -27,8 +27,13 @@ struct Hardware
 	struct Stack stack;
 
 	/* Peripherals */
+	int is_turned_on;
 	struct Graphics gfx;
 	uint8_t keyboard[16];
+
+	/* Clock */
+	Uint64 clock;
+	int num_ticks;
 };
 
 int hardware_init(struct Hardware *hw, char *rom_path);
@@ -36,6 +41,7 @@ void hardware_free(struct Hardware *hw);
 int load_font(uint8_t *memory);
 uint16_t load_rom(char *rom_path, uint8_t *memory);
 uint16_t gen_random();
+void keyboard_reset(struct Hardware *hw);
 void keyboard_down(struct Hardware *hw, int key);
 void keyboard_up(struct Hardware *hw, int key);
 int is_key_pressed(struct Hardware *hw, int key);
@@ -44,5 +50,13 @@ uint8_t timer_delay_get(struct Hardware *hw);
 void timer_delay_set(struct Hardware *hw, uint8_t amount);
 void timer_sound_set(struct Hardware *hw, uint8_t amount);
 
+/* Initializes the clock, starting the timer and zeroing number of ticks */
+void clock_reset(struct Hardware *hw);
+
+/* Increase the number of ticks by one. 
+ * Once it reaches INSTRUCTIONS_PER_SECOND, wait until a second passes since last timer reset,
+ * and then re-init the clock.
+ * All the while, process incoming events */
+void clock_tick(struct Hardware *hw);
 
 #endif /* ifndef _HARDWARE_ */

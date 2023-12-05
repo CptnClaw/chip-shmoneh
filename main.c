@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "config.h"
-#include "clock.h"
 #include "processor.h"
 #include "events.h"
 
@@ -19,13 +18,13 @@ int main(int argc, char *argv[])
 
 	int running = 1;
 	uint8_t instruction[2];
-	struct Clock clock;
-	clock_init(&clock);
 	while (running)
 	{
-		if (fetch(&hw, instruction) && execute(&hw, instruction) && events_handle(&hw))
+		if (hw.is_turned_on &&
+			fetch(&hw, instruction) && 
+			execute(&hw, instruction))
 		{
-			clock_tick(&clock);
+			clock_tick(&hw);
 		}
 		else
 		{

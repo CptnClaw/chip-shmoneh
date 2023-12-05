@@ -7,10 +7,13 @@ int events_handle(struct Hardware *hw)
 	{
 		switch (event.type)
 		{
-			case SDL_QUIT: return 0;
+			case SDL_QUIT: 
+				hw->is_turned_on = 0;
+				return 0;
 			case SDL_KEYDOWN:
 				if (event.key.keysym.sym == SDLK_ESCAPE)
 				{
+					hw->is_turned_on = 0;
 					return 0;
 				}
 				switch (event.key.keysym.scancode)

@@ -3,9 +3,11 @@
 #include <stdlib.h>
 #include "hardware.h"
 #include "font.h"
+#include "events.h"
 
 #define MS_TO_TIMER(ms)		((ms) * TIMERS_RATE / 1000)
 #define TIMER_TO_MS(amt)	((amt) * 1000 / TIMERS_RATE)
+#define INST_PER_10MS		INSTRUCTIONS_PER_SECOND / 100
 
 int hardware_init(struct Hardware *hw, char *rom_path)
 {
@@ -14,6 +16,7 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 	hw->timer_delay = 0;
 	hw->timer_sound = 0;
 	stack_init(&(hw->stack));
+	keyboard_reset(hw);
 	graphics_init(&(hw->gfx), rom_path);
 	hw->rom_size = load_rom(rom_path, hw->memory);
 	if (!hw->rom_size && !load_font(hw->memory))
@@ -21,6 +24,8 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 		return 0;
 	}
 	srand(time(NULL));
+	clock_reset(hw);
+	hw->is_turned_on = 1;
 	return 1;
 }
 
@@ -71,6 +76,14 @@ uint16_t gen_random()
 	return (uint16_t)rand();
 }
 
+void keyboard_reset(struct Hardware *hw)
+{
+	for (int i=0; i<16; i++)
+	{
+		hw->keyboard[i] = 0;
+	}
+}
+
 void keyboard_down(struct Hardware *hw, int key)
 {
 	hw->keyboard[key] = 1;
@@ -117,4 +130,33 @@ void timer_delay_set(struct Hardware *hw, uint8_t amount)
 void timer_sound_set(struct Hardware *hw, uint8_t amount)
 {
 	hw->timer_sound = SDL_GetTicks64() + TIMER_TO_MS(amount);
+}
+
+void clock_reset(struct Hardware *hw)
+{
+	hw->clock = SDL_GetTicks64();
+	hw->num_ticks = 0;
+}
+
+void clock_tick(struct Hardware *hw)
+{
+	hw->num_ticks++;
+	if (hw->num_ticks == INST_PER_10MS)
+	{
+		/* printf("Sleeping from %d to %d (%d ms)\n", (unsigned int)SDL_GetTicks64(), (unsigned int)(hw->clock+10), (unsigned int)((hw->clock + 10) - SDL_GetTicks64())); */
+		while (SDL_GetTicks64() < (hw->clock + 10) &&
+				events_handle(hw))
+		{
+			/* Do nothing */
+		}
+		clock_reset(hw);
+	}
+	else if (hw->num_ticks > INSTRUCTIONS_PER_SECOND) 
+	{
+		printf("ERROR: Ran too many instructions, something is wrong with the clock\n");
+	}
+	else
+	{
+		events_handle(hw);
+	}
 }

@@ -1,4 +1,4 @@
-#define INSTRUCTIONS_PER_SECOND 700
+#define INSTRUCTIONS_PER_SECOND 1000
 #define DISPLAY_SCALE 10
 #define DEBUG 0  /* 0=No debug info, 1=Instruction, 2=Instruction+disasm */
 
