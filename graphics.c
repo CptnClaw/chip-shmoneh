@@ -74,7 +74,7 @@ uint8_t flip_pixel(uint32_t *pixels, int x, int y)
 uint8_t draw_sprite_line(uint32_t *pixels, int x, int y, uint8_t line)
 {
 	uint8_t has_collision = 0;
-	for (uint8_t j=0; j<8; j++)
+	for (uint8_t j=0; j<8 && x+j<LOGICAL_DISPLAY_W; j++)
 	{
 		if ((line & (128 >> j)) != 0)
 		{
@@ -89,7 +89,7 @@ void graphics_draw(struct Graphics *gfx, uint8_t x, uint8_t y, uint8_t *sprite, 
 	x = x % LOGICAL_DISPLAY_W;
 	y = y % LOGICAL_DISPLAY_H;
 	(*collision) = 0;
-	for (uint8_t i=0; i<sprite_height; i++)
+	for (uint8_t i=0; i<sprite_height && y+i<LOGICAL_DISPLAY_H; i++)
 	{
 		(*collision) |= draw_sprite_line(gfx->pixels, x, y+i, *(sprite+i));
 	}
