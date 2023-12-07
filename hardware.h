@@ -30,6 +30,10 @@ struct Hardware
 	int is_turned_on;
 	struct Graphics gfx;
 	uint8_t keyboard[16];
+	
+	/* Saves previous keyboard to be used for FX0A (get key) */
+	int is_waiting_key;
+	int prev_keyboard[16]; 
 
 	/* Clock */
 	Uint64 clock;

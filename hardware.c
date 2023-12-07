@@ -26,6 +26,7 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 	srand(time(NULL));
 	clock_reset(hw);
 	hw->is_turned_on = 1;
+	hw->is_waiting_key = 0;
 	return 1;
 }
 
@@ -81,6 +82,7 @@ void keyboard_reset(struct Hardware *hw)
 	for (int i=0; i<16; i++)
 	{
 		hw->keyboard[i] = 0;
+		hw->prev_keyboard[i] = 0;
 	}
 }
 
@@ -101,12 +103,24 @@ int is_key_pressed(struct Hardware *hw, int key)
 
 int is_any_key_pressed(struct Hardware *hw)
 {
+	if (hw->is_waiting_key)
+	{
+		/* Check if a key was up since last time the keyboard was saved */
+		for (int i=0; i<16; i++)
+		{
+			if (hw->prev_keyboard[i] && !hw->keyboard[i])
+			{
+				hw->is_waiting_key = 0;
+				return i;
+			}
+		}
+	}
+
+	/* Save a copy of the current keyboard */
+	hw->is_waiting_key = 1;
 	for (int i=0; i<16; i++)
 	{
-		if (hw->keyboard[i] == 1)
-		{
-			return i;
-		}
+		hw->prev_keyboard[i] = hw->keyboard[i];
 	}
 	return -1;
 }
