@@ -332,7 +332,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					temp = hw->variables[X(instruction)] & 0x0F;
 					hw->index = MEM_LOC_FONT + (temp * FONT_WIDTH);
 					break;
-				/* FX33 Binary-coded decimal conversion */
+				/* FX33 Binary-decimal conversion */
 				case 0x33: 
 					temp = hw->variables[X(instruction)];
 					hw->memory[hw->index] = temp / 100;

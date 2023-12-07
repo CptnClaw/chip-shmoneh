@@ -19,7 +19,7 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 	keyboard_reset(hw);
 	graphics_init(&(hw->gfx), rom_path);
 	hw->rom_size = load_rom(rom_path, hw->memory);
-	if (!hw->rom_size && !load_font(hw->memory))
+	if (!hw->rom_size || !load_font(hw->memory))
 	{
 		return 0;
 	}
@@ -132,7 +132,7 @@ uint8_t timer_delay_get(struct Hardware *hw)
 	{
 		return 0;
 	}
-	Uint64 diff = now - hw->timer_delay;
+	Uint64 diff = hw->timer_delay - now;
 	return (uint8_t)(MS_TO_TIMER(diff));
 }
 
