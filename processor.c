@@ -266,18 +266,19 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 			break;
 
 		case 0xE:
+			temp = hw->variables[X(instruction)] & 0x0F;
 			switch (NN(instruction))
 			{
 				/* EX9E Skip if key (pressed) */
 				case 0x9E:
-					if (is_key_pressed(hw, hw->variables[X(instruction)]))
+					if (is_key_pressed(hw, temp))
 					{
 						hw->pc += 2;
 					}
 					break;
 				/* EXA1 Skip if key (not pressed) */ 
 				case 0xA1:
-					if (!is_key_pressed(hw, hw->variables[X(instruction)]))
+					if (!is_key_pressed(hw, temp))
 					{
 						hw->pc += 2;
 					}
@@ -328,8 +329,8 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					break;
 				/* FX29 Font character */
 				case 0x29: 
-					hw->index = MEM_LOC_FONT + 
-						(hw->variables[X(instruction)] * FONT_WIDTH);
+					temp = hw->variables[X(instruction)] & 0x0F;
+					hw->index = MEM_LOC_FONT + (temp * FONT_WIDTH);
 					break;
 				/* FX33 Binary-coded decimal conversion */
 				case 0x33: 
