@@ -59,7 +59,7 @@ uint16_t load_rom(char *rom_path, uint8_t *memory)
 
 	int rom_size = rom_stat.st_size;
 	/* printf("%s weighs %d bytes\n", rom_path, rom_size); */
-	if (!is_prog_size_ok(rom_size))
+	if (rom_size + MEM_LOC_FONT > MEM_SIZE)
 	{
 		printf("Error: ROM file too large\n");
 		return 0;
@@ -86,12 +86,12 @@ void keyboard_reset(struct Hardware *hw)
 	}
 }
 
-void keyboard_down(struct Hardware *hw, int key)
+void keyboard_press(struct Hardware *hw, int key)
 {
 	hw->keyboard[key] = 1;
 }
 
-void keyboard_up(struct Hardware *hw, int key)
+void keyboard_release(struct Hardware *hw, int key)
 {
 	hw->keyboard[key] = 0;
 }
@@ -101,7 +101,7 @@ int is_key_pressed(struct Hardware *hw, int key)
 	return (hw->keyboard[key] == 1);
 }
 
-int is_any_key_pressed(struct Hardware *hw)
+int did_any_key_release(struct Hardware *hw)
 {
 	if (hw->is_waiting_key)
 	{

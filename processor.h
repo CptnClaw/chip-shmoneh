@@ -1,7 +1,9 @@
 #include "config.h"
 #include "hardware.h"
 
+/* Variable 0xF is the flag register */
 #define FLAG_REG 0xF
+
 /* opcode decoding */
 #define OPCODE(inst) (inst[0] >> 4)
 #define X(inst) ((inst)[0] & 0x0F)
@@ -11,8 +13,16 @@
 #define NNN(inst) (((uint16_t)((inst)[0] & 0x0F) << 8) + (uint16_t)(inst)[1])
 #define WHOLE(inst) (((uint16_t)(inst)[0] << 8) + (uint16_t)(inst)[1])
 
-/* Reads the current instruction into the last variable and increases pc by 2 */
+/* Reads the current instruction into the second argument and increases pc by 2.
+ * This function also prints debug information (address of next instruction, i.e. pc)
+ * if the DEBUG config is greater or equal to 1. 
+ * Returns:
+ *		1 if successful.
+ *		0 if there are no more instructions left in memory. */
 int fetch(struct Hardware *hw, uint8_t *instruction);
 
-/* Executes a single instruction */
+/* Executes a single instruction.
+ * Returns:
+ *		1 if successful.
+ *		0 if there was any problem. In that case, the error will also be printed. */
 int execute(struct Hardware *hw, uint8_t *instruction);

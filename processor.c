@@ -316,7 +316,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					break;
 				/* 0xFX0A Get key */
 				case 0x0A:
-					key = is_any_key_pressed(hw);
+					key = did_any_key_release(hw);
 					if (key == -1)
 					{
 						/* No key is pressed, go back (try again) */

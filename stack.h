@@ -15,6 +15,6 @@ void stack_init(struct Stack *stack);
 /* Returns 0 if stack is full */
 int stack_push(struct Stack *stack, uint16_t item);
 
-/* Return 0 if stack is empty */
+/* Returns 0 if stack is empty */
 int stack_pop(struct Stack *stack, uint16_t *item);
 

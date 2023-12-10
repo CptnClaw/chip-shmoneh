@@ -9,22 +9,24 @@
 
 void graphics_init(struct Graphics *gfx, char *window_title)
 {
-	SDL_Init(SDL_INIT_VIDEO);
-	IMG_Init(IMG_INIT_PNG);
-	
+	/* Set physical screen dimensions and allocate pixels buffer */
 	gfx->display_w = LOGICAL_DISPLAY_W * DISPLAY_SCALE;
 	gfx->display_h = LOGICAL_DISPLAY_H * DISPLAY_SCALE;
-	SDL_Rect dr = {0, 0, gfx->display_w, gfx->display_h};
-	gfx->display_rect = dr;
 	gfx->pixels = malloc(sizeof(uint32_t) * gfx->display_h * gfx->display_w);
 
+	/* Initialize SDL and open window */
+	SDL_Init(SDL_INIT_VIDEO);
+	IMG_Init(IMG_INIT_PNG);
 	gfx->window = SDL_CreateWindow(window_title, 
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 			gfx->display_w, gfx->display_h, 0);
 	gfx->renderer = SDL_CreateRenderer(gfx->window, -1, 0);
 	SDL_SetRenderDrawColor(gfx->renderer, 0, 0, 0, 0);
 	gfx->texture = SDL_CreateTexture(gfx->renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, gfx->display_w, gfx->display_h);
+	SDL_Rect dr = {0, 0, gfx->display_w, gfx->display_h};
+	gfx->display_rect = dr;
 
+	/* Fill screen with black pixels */
 	graphics_clear(gfx);
 }
 
@@ -34,7 +36,6 @@ void graphics_free(struct Graphics *gfx)
 	SDL_DestroyTexture(gfx->texture);
 	SDL_DestroyRenderer(gfx->renderer);
 	SDL_DestroyWindow(gfx->window);
-
 	IMG_Quit();
 	SDL_Quit();
 }
