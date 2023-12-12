@@ -44,10 +44,13 @@ extern struct Config CONFIG;
 
 /* Read configuration file chip-shmoneh.conf from the current working directory
  * and populates the externally-linked CONFIG.
+ * Please call this function before anything else!
  * Returns:
  *		1 if successful.
  *		0 if there was any problem. The error will also be printed. */
-int read_config();
+int load_config();
 
+/* Prints the config values for debug purposes */
+void print_config();
 
 #endif  // CONFIG_H_

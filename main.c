@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (!read_config())
+	if (!load_config())
 	{
 		return 1;
 	}
