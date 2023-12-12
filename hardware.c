@@ -7,7 +7,7 @@
 
 #define MS_TO_TIMER(ms)		((ms) * TIMERS_RATE / 1000)
 #define TIMER_TO_MS(amt)	((amt) * 1000 / TIMERS_RATE)
-#define INST_PER_10MS		INSTRUCTIONS_PER_SECOND / 100
+#define INST_PER_10MS		CONFIG.INSTRUCTIONS_PER_SECOND / 100
 
 int hardware_init(struct Hardware *hw, char *rom_path)
 {
@@ -165,7 +165,7 @@ void clock_tick(struct Hardware *hw)
 		}
 		clock_reset(hw);
 	}
-	else if (hw->num_ticks > INSTRUCTIONS_PER_SECOND) 
+	else if (hw->num_ticks > CONFIG.INSTRUCTIONS_PER_SECOND) 
 	{
 		printf("ERROR: Ran too many instructions, something is wrong with the clock\n");
 	}

@@ -11,7 +11,7 @@ int fetch(struct Hardware *hw, uint8_t *instruction)
 		return 0;
 	}
 
-	if (DEBUG >= 1)
+	if (CONFIG.DEBUG >= 1)
 	{
 		printf("%.4X ||| ", hw->pc);
 	}
@@ -39,7 +39,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 {
 	int key;
 	int temp;
-	if (DEBUG >=1)
+	if (CONFIG.DEBUG >=1)
 	{
 		print_inst(instruction);
 	}
@@ -135,7 +135,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 				case 0x1:
 					hw->variables[X(instruction)] |=
 						hw->variables[Y(instruction)];
-					if (LOGIC_FLAG_BEHAVIOR == 0) 
+					if (CONFIG.LOGIC_FLAG_BEHAVIOR == 0) 
 					{
 						hw->variables[FLAG_REG] = 0;
 					}
@@ -144,7 +144,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 				case 0x2:
 					hw->variables[X(instruction)] &=
 						hw->variables[Y(instruction)];
-					if (LOGIC_FLAG_BEHAVIOR == 0) 
+					if (CONFIG.LOGIC_FLAG_BEHAVIOR == 0) 
 					{
 						hw->variables[FLAG_REG] = 0;
 					}
@@ -153,7 +153,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 				case 0x3:
 					hw->variables[X(instruction)] ^=
 						hw->variables[Y(instruction)];
-					if (LOGIC_FLAG_BEHAVIOR == 0) 
+					if (CONFIG.LOGIC_FLAG_BEHAVIOR == 0) 
 					{
 						hw->variables[FLAG_REG] = 0;
 					}
@@ -189,7 +189,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					break;
 				/* 8XY6 Shift (right) */
 				case 0x6:
-					switch (SHIFT_BEHAVIOR) 
+					switch (CONFIG.SHIFT_BEHAVIOR) 
 					{
 						case 0:
 							hw->variables[X(instruction)] =
@@ -207,7 +207,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					break;
 				/* 8XYE Shift (left) */
 				case 0xE:
-					switch (SHIFT_BEHAVIOR) 
+					switch (CONFIG.SHIFT_BEHAVIOR) 
 					{
 						case 0:
 							hw->variables[X(instruction)] =
@@ -236,7 +236,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 		/* BNNN Jump with offset */
 		case 0xB:
 			hw->pc = NNN(instruction);
-			switch (JUMP_OFFSET_BEHAVIOR)
+			switch (CONFIG.JUMP_OFFSET_BEHAVIOR)
 			{
 				case 0:
 					hw->pc += hw->variables[0];
@@ -305,7 +305,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					break;
 				/* FX1E Add to index */
 				case 0x1E: 
-					if (ADD_INDEX_BEHAVIOR == 1 &&
+					if (CONFIG.ADD_INDEX_BEHAVIOR == 1 &&
 						hw->variables[X(instruction)] >
 						0x0FFF - hw->index)
 					{
@@ -347,7 +347,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					{
 						hw->memory[hw->index + i] = hw->variables[i];
 					}
-					if (STORE_MEM_BEHAVIOR == 0)
+					if (CONFIG.STORE_MEM_BEHAVIOR == 0)
 					{
 						hw->index += X(instruction) + 1;
 					}
@@ -358,7 +358,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 					{
 						hw->variables[i] = hw->memory[hw->index + i];
 					}
-					if (STORE_MEM_BEHAVIOR == 0)
+					if (CONFIG.STORE_MEM_BEHAVIOR == 0)
 					{
 						hw->index += X(instruction) + 1;
 					}

@@ -10,8 +10,8 @@
 void graphics_init(struct Graphics *gfx, char *window_title)
 {
 	/* Set physical screen dimensions and allocate pixels buffer */
-	gfx->display_w = LOGICAL_DISPLAY_W * DISPLAY_SCALE;
-	gfx->display_h = LOGICAL_DISPLAY_H * DISPLAY_SCALE;
+	gfx->display_w = LOGICAL_DISPLAY_W * CONFIG.DISPLAY_SCALE;
+	gfx->display_h = LOGICAL_DISPLAY_H * CONFIG.DISPLAY_SCALE;
 	gfx->pixels = malloc(sizeof(uint32_t) * gfx->display_h * gfx->display_w);
 
 	/* Initialize SDL and open window */
@@ -52,9 +52,9 @@ void graphics_clear(struct Graphics *gfx)
 
 uint8_t flip_pixel(uint32_t *pixels, int x, int y)
 {
-	int vis_x = x * DISPLAY_SCALE;
-	int vis_y = y * DISPLAY_SCALE;
-	int vis_w = LOGICAL_DISPLAY_W * DISPLAY_SCALE;
+	int vis_x = x * CONFIG.DISPLAY_SCALE;
+	int vis_y = y * CONFIG.DISPLAY_SCALE;
+	int vis_w = LOGICAL_DISPLAY_W * CONFIG.DISPLAY_SCALE;
 	uint8_t has_collision = 0;
 
 	uint32_t cur_val = pixels[vis_y * vis_w + vis_x];
@@ -62,9 +62,9 @@ uint8_t flip_pixel(uint32_t *pixels, int x, int y)
 	if (cur_val == 0)	new_val = -1;
 	else				has_collision = 1;
 	
-	for (int i = 0 ; i < DISPLAY_SCALE ; i++)
+	for (int i = 0 ; i < CONFIG.DISPLAY_SCALE ; i++)
 	{
-		for (int j = 0 ; j < DISPLAY_SCALE ; j++)
+		for (int j = 0 ; j < CONFIG.DISPLAY_SCALE ; j++)
 		{
 			pixels[(vis_y+i)*vis_w + (vis_x+j)] = new_val;
 		}

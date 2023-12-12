@@ -184,7 +184,7 @@ void print_inst(uint8_t *instruction)
 			NN(instruction),
 			NNN(instruction));
 
-	if (DEBUG == 2)
+	if (CONFIG.DEBUG == 2)
 	{
 		print_disasm(instruction);
 	}

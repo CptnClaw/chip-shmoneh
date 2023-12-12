@@ -9,7 +9,12 @@ int main(int argc, char *argv[])
 	if (argc < 2)
 	{
 		printf("Usage: chip-shmoneh <rom file>\n");
-		return 0;
+		return 1;
+	}
+
+	if (!read_config())
+	{
+		return 1;
 	}
 
 	char *rom_path = argv[1];
