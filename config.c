@@ -8,7 +8,7 @@
 
 /* This is the global configuration variable,
  * to be used elsewhere by including "config.h" (which has an extern statement)
- * and modified ONLY by the read_config function. */
+ * and modified ONLY by the load_config function. */
 struct Config CONFIG;
 
 int load_config()

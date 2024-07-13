@@ -6,8 +6,10 @@
 
 int fetch(struct Hardware *hw, uint8_t *instruction)
 {
-	if (hw->pc > MEM_LOC_PROG + hw->rom_size) 	
+	if (hw->pc < MEM_LOC_PROG ||
+		hw->pc > MEM_LOC_PROG + hw->rom_size)
 	{
+		printf("Error: Read instructions from out of bounds, pc = 0x%X\n", hw->pc);
 		return 0;
 	}
 
