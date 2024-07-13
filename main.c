@@ -2,7 +2,7 @@
 #include "config.h"
 #include "processor.h"
 #include "events.h"
-
+#include "sound.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +20,8 @@ int main(int argc, char *argv[])
 	char *rom_path = argv[1];
 	struct Hardware hw;
 	hardware_init(&hw, rom_path);
+
+	beep_start();
 
 	int running = 1;
 	uint8_t instruction[2];

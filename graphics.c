@@ -15,7 +15,7 @@ void graphics_init(struct Graphics *gfx, char *window_title)
 	gfx->pixels = malloc(sizeof(uint32_t) * gfx->display_h * gfx->display_w);
 
 	/* Initialize SDL and open window */
-	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO);
 	IMG_Init(IMG_INIT_PNG);
 	gfx->window = SDL_CreateWindow(window_title, 
 			SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
