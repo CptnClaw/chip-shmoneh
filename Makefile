@@ -1,6 +1,20 @@
+CC=clang
+CSTD=-std=c11
+SOURCE=config.c debug.c events.c graphics.c hardware.c main.c processor.c stack.c
+OUTPUT=chip-shmoneh
+DEBUG=-g3 -O0
+TEST=roms/2-ibm-logo.ch8
+
+# Should be the output of `sdl2-config --cflags --libs` 
+SDL=-I/usr/include/SDL2 -D_REENTRANT -L/usr/lib -lSDL2
+
+SDLIMG=-lSDL2_image 
+
 build: 
-	clang *.c -std=c11 `sdl2-config --libs --cflags` -lSDL2_image -o chip-shmoneh
+	$(CC) $(SOURCE) $(CSTD) $(SDL) $(SDLIMG) -o $(OUTPUT)
 debug: 
-	clang *.c -g3 -O0 -std=c11 `sdl2-config --libs --cflags` -lSDL2_image -o chip-shmoneh
+	$(CC) $(SOURCE) $(DEBUG) $(CSTD) $(SDL) $(SDLIMG) -o $(OUTPUT)
 run:
-	./chip-shmoneh ../chip8-test-suite/bin/3-corax+.ch8
+	./$(OUTPUT) $(TEST)
+clean:
+	rm -rf $(OUTPUT)
