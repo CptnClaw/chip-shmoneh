@@ -16,6 +16,7 @@ int load_config()
 	/* Set default values */
 	CONFIG.INSTRUCTIONS_PER_SECOND = 1000;
 	CONFIG.DISPLAY_SCALE = 10;
+	CONFIG.PIXEL_GRID_GAP = 0;
 	CONFIG.DEBUG = 0; 
 	CONFIG.SHIFT_BEHAVIOR = 1;
 	CONFIG.JUMP_OFFSET_BEHAVIOR = 0;
@@ -62,6 +63,10 @@ int load_config()
 			{
 				CONFIG.DISPLAY_SCALE = atoi(value);
 			}
+			else if (0 == strcmp(entry, "PIXEL_GRID_GAP"))
+			{
+				CONFIG.PIXEL_GRID_GAP = atoi(value);
+			}
 			else if (0 == strcmp(entry, "DEBUG"))
 			{
 				CONFIG.DEBUG = atoi(value);
@@ -94,6 +99,13 @@ int load_config()
 		}
 	}
 	fclose(file);
+	
+	if (CONFIG.PIXEL_GRID_GAP < 0 ||
+		CONFIG.PIXEL_GRID_GAP > CONFIG.DISPLAY_SCALE / 2)
+	{
+		printf("Invalid configuration value PIXEL_GRID_GAP=%d", CONFIG.PIXEL_GRID_GAP);
+		return 0;
+	}
 
 	return 1;
 }
@@ -103,6 +115,7 @@ void print_config()
 {
 	printf("INSTRUCTIONS_PER_SECOND = %d\n", CONFIG.INSTRUCTIONS_PER_SECOND);
 	printf("DISPLAY_SCALE = %d\n", CONFIG.DISPLAY_SCALE);
+	printf("PIXEL_GRID_GAP = %d\n", CONFIG.PIXEL_GRID_GAP);
 	printf("DEBUG = %d\n", CONFIG.DEBUG );
 	printf("SHIFT_BEHAVIOR = %d\n", CONFIG.SHIFT_BEHAVIOR);
 	printf("JUMP_OFFSET_BEHAVIOR = %d\n", CONFIG.JUMP_OFFSET_BEHAVIOR);

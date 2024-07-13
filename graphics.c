@@ -55,16 +55,17 @@ uint8_t flip_pixel(uint32_t *pixels, int x, int y)
 	int vis_x = x * CONFIG.DISPLAY_SCALE;
 	int vis_y = y * CONFIG.DISPLAY_SCALE;
 	int vis_w = LOGICAL_DISPLAY_W * CONFIG.DISPLAY_SCALE;
+	int gap = CONFIG.PIXEL_GRID_GAP;
 	uint8_t has_collision = 0;
-
-	uint32_t cur_val = pixels[vis_y * vis_w + vis_x];
+	
+	uint32_t cur_val = pixels[(vis_y+gap) * vis_w + (vis_x+gap)];
 	uint32_t new_val = 0;
 	if (cur_val == 0)	new_val = -1;
 	else				has_collision = 1;
 	
-	for (int i = 0 ; i < CONFIG.DISPLAY_SCALE ; i++)
+	for (int i = gap ; i < CONFIG.DISPLAY_SCALE - gap ; i++)
 	{
-		for (int j = 0 ; j < CONFIG.DISPLAY_SCALE ; j++)
+		for (int j = gap ; j < CONFIG.DISPLAY_SCALE - gap ; j++)
 		{
 			pixels[(vis_y+i)*vis_w + (vis_x+j)] = new_val;
 		}

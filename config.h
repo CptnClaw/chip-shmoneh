@@ -11,6 +11,10 @@ struct Config
 	/* Default 10 */
 	int DISPLAY_SCALE; 
 
+	/* Default 0 */
+	/* Must be non-negative and at most DISPLAY_SCALE / 2. */
+	int PIXEL_GRID_GAP; 
+
 	/* 0=No debug info, 1=Instruction, 2=Instruction+disasm */
 	int DEBUG; 
 
