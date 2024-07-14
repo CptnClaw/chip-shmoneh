@@ -17,7 +17,7 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 	hw->timer_sound = 0;
 	stack_init(&(hw->stack));
 	keyboard_reset(hw);
-	graphics_init(&(hw->gfx), rom_path);
+	display_init(&(hw->display));
 	hw->rom_size = load_rom(rom_path, hw->memory);
 	if (!hw->rom_size || !load_font(hw->memory))
 	{
@@ -32,7 +32,7 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 
 void hardware_free(struct Hardware *hw)
 {
-	graphics_free(&(hw->gfx));
+	display_free(&(hw->display));
 }
 
 int load_font(uint8_t *memory)
@@ -157,9 +157,11 @@ void clock_tick(struct Hardware *hw)
 	hw->num_ticks++;
 	if (hw->num_ticks == INST_PER_10MS)
 	{
-		/* printf("Sleeping from %d to %d (%d ms)\n", (unsigned int)SDL_GetTicks64(), (unsigned int)(hw->clock+10), (unsigned int)((hw->clock + 10) - SDL_GetTicks64())); */
-		while (SDL_GetTicks64() < (hw->clock + 10) &&
-				events_handle(hw))
+		if ((unsigned int)((hw->clock + 1) - SDL_GetTicks64()) != 1) 
+		{
+			/* printf("%dms\n", (unsigned int)((hw->clock + 10) - SDL_GetTicks64())); */
+		}
+		while (SDL_GetTicks64() < (hw->clock + 10))
 		{
 			/* Do nothing */
 		}

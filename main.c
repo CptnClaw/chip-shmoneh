@@ -2,6 +2,10 @@
 #include "config.h"
 #include "processor.h"
 #include "events.h"
+#include "graphics.h"
+
+// Frames per second
+#define FPS  60
 
 
 int main(int argc, char *argv[])
@@ -19,25 +23,31 @@ int main(int argc, char *argv[])
 
 	char *rom_path = argv[1];
 	struct Hardware hw;
+	struct Graphics gfx;
 	hardware_init(&hw, rom_path);
+	graphics_init(&gfx, rom_path);
 
 	int running = 1;
 	uint8_t instruction[2];
+	int IPF = CONFIG.INSTRUCTIONS_PER_SECOND / FPS;  // Instuctions per frame
 	while (running)
 	{
-		if (hw.is_turned_on &&
-			fetch(&hw, instruction) && 
-			execute(&hw, instruction))
+		for (int i=0; i < IPF; i++)
 		{
-			clock_tick(&hw);
+			if (!hw.is_turned_on ||
+				!events_handle(&hw) ||
+				!fetch(&hw, instruction) ||
+				!execute(&hw, instruction))
+			{
+				/* Either reached end of memory, instruction failed, or got a quit signal */
+				running = 0;
+				break;
+			}
 		}
-		else
-		{
-			/* Either reached end of memory, instruction failed, or got a quit signal */
-			running = 0;
-		}
-
+		graphics_render(&gfx, &hw.display);
+		SDL_Delay((int)(1000.0 / FPS + 0.5));
 	}
 	hardware_free(&hw);
+	graphics_free(&gfx);
 	return 0;
 }

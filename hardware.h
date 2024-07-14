@@ -1,9 +1,10 @@
 #ifndef _HARDWARE_
 #define _HARDWARE_
 
+#include <SDL.h>
 #include "config.h"
 #include "stack.h"
-#include "graphics.h"
+#include "display.h"
 
 #define MEM_SIZE 0x1000  /* 4 kilobytes */
 #define MEM_LOC_FONT 0x050
@@ -24,7 +25,7 @@ struct Hardware
 	struct Stack stack;
 
 	/* Peripherals */
-	struct Graphics gfx;
+	struct Display display;
 	uint8_t keyboard[16];
 	
 	/* Saves previous keyboard to be used for FX0A (get key) */

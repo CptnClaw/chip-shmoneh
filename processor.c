@@ -51,7 +51,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 			/* 00E0 Clear screen */
 			if (NNN(instruction) == 0x0E0)
 			{
-				graphics_clear(&hw->gfx);
+				display_clear(&hw->display);
 			}
 			/* 00EE Subroutine (return) */
 			else if (NNN(instruction) == 0x0EE)
@@ -259,7 +259,7 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 
 		/* DXYN Display */
 		case 0xD:
-			graphics_draw(&hw->gfx, 
+			display_draw(&hw->display, 
 					hw->variables[X(instruction)],
 					hw->variables[Y(instruction)],
 					hw->memory + hw->index,
