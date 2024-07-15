@@ -37,7 +37,7 @@ int error_config(char *field)
 	return 0;
 }
 
-int execute(struct Hardware *hw, uint8_t *instruction)
+int execute(struct Hardware *hw, uint8_t *instruction, int cycle)
 {
 	int key;
 	int temp;
@@ -51,7 +51,15 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 			/* 00E0 Clear screen */
 			if (NNN(instruction) == 0x0E0)
 			{
-				display_clear(&hw->display);
+				if (!CONFIG.QUIRK_WAIT_VBLANK || cycle == 0)
+				{
+					display_clear(&hw->display);
+				}
+				else
+				{
+					/* Wait for VBLANK (first cycle) */
+					hw->pc-=2;
+				}
 			}
 			/* 00EE Subroutine (return) */
 			else if (NNN(instruction) == 0x0EE)
@@ -259,12 +267,20 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 
 		/* DXYN Display */
 		case 0xD:
-			display_draw(&hw->display, 
-					hw->variables[X(instruction)],
-					hw->variables[Y(instruction)],
-					hw->memory + hw->index,
-					N(instruction),
-					&(hw->variables[FLAG_REG]));
+			if (!CONFIG.QUIRK_WAIT_VBLANK || cycle == 0)
+			{
+				display_draw(&hw->display,
+							 hw->variables[X(instruction)],
+							 hw->variables[Y(instruction)],
+							 hw->memory + hw->index,
+							 N(instruction),
+							 &(hw->variables[FLAG_REG]));
+			}
+			else
+			{
+				/* Wait for VBLANK (first cycle) */
+				hw->pc -= 2;
+			}
 			break;
 
 		case 0xE:
@@ -295,15 +311,15 @@ int execute(struct Hardware *hw, uint8_t *instruction)
 			{
 				/* FX07 Timer (get delay) */
 				case 0x07: 
-					hw->variables[X(instruction)] = timer_delay_get(hw);
+					hw->variables[X(instruction)] = hw->timer_delay;
 					break;
 				/* FX15 Timer (set delay) */
 				case 0x15: 
-					timer_delay_set(hw, hw->variables[X(instruction)]);
+					hw->timer_delay = hw->variables[X(instruction)];
 					break;
 				/* FX18 Timer (set sound) */
 				case 0x18:
-					timer_sound_set(hw, hw->variables[X(instruction)]);
+					hw->timer_sound = hw->variables[X(instruction)];
 					break;
 				/* FX1E Add to index */
 				case 0x1E: 

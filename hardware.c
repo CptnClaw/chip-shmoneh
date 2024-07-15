@@ -124,23 +124,8 @@ int did_any_key_release(struct Hardware *hw)
 	return -1;
 }
 
-uint8_t timer_delay_get(struct Hardware *hw)
+void timers_step(struct Hardware *hw)
 {
-	Uint64 now = SDL_GetTicks64();
-	if (now > hw->timer_delay)
-	{
-		return 0;
-	}
-	Uint64 diff = hw->timer_delay - now;
-	return (uint8_t)(MS_TO_TIMER(diff));
-}
-
-void timer_delay_set(struct Hardware *hw, uint8_t amount)
-{
-	hw->timer_delay = SDL_GetTicks64() + TIMER_TO_MS(amount);
-}
-
-void timer_sound_set(struct Hardware *hw, uint8_t amount)
-{
-	hw->timer_sound = SDL_GetTicks64() + TIMER_TO_MS(amount);
+	if (hw->timer_delay > 0) 	hw->timer_delay--;
+	if (hw->timer_sound > 0) 	hw->timer_sound--;
 }

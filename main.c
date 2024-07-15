@@ -33,12 +33,13 @@ int main(int argc, char *argv[])
 	{
 		clock_tick(&clk);
 		graphics_render(&gfx, &hw.display);
+		timers_step(&hw);
 		for (int i=0; i < IPF; i++)
 		{
 			running = hw.is_turned_on &&
 					events_handle(&hw) &&
 					fetch(&hw, instruction) &&
-					execute(&hw, instruction);
+					execute(&hw, instruction, i);
 		}
 		clock_tock(&clk);
 	}

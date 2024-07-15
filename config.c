@@ -101,6 +101,10 @@ int load_config()
 			{
 				CONFIG.LOGIC_FLAG_BEHAVIOR = atoi(value);
 			}
+			else if (0 == strcmp(entry, "QUIRK_WAIT_VBLANK"))
+			{
+				CONFIG.QUIRK_WAIT_VBLANK = atoi(value);
+			}
 			else
 			{
 				printf("Invalid configuration entry: %s\n", entry);

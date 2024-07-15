@@ -22,7 +22,9 @@
 int fetch(struct Hardware *hw, uint8_t *instruction);
 
 /* Executes a single instruction.
+ * Cycle is the number of instructions ran since last frame,
+ * needed because some instructions must execute only on the first cycle (also known as vblank).
  * Returns:
  *		1 if successful.
  *		0 if there was any problem. In that case, the error will also be printed. */
-int execute(struct Hardware *hw, uint8_t *instruction);
+int execute(struct Hardware *hw, uint8_t *instruction, int cycle);

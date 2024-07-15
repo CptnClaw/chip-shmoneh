@@ -88,14 +88,8 @@ int is_key_pressed(struct Hardware *hw, int key);
  *		-1 if no key was released. */
 int did_any_key_release(struct Hardware *hw);
 
-/* Returns the value of the delay timer. The units are TIMERS_RATE per second. */
-uint8_t timer_delay_get(struct Hardware *hw);
-
-/* Sets the value of the delay timer. The units are TIMERS_RATE per second. */
-void timer_delay_set(struct Hardware *hw, uint8_t amount);
-
-/* Sets the value of the sound timer. The units are TIMERS_RATE per second. 
- * A beep will sound while the sound timer is greater than zero. */
-void timer_sound_set(struct Hardware *hw, uint8_t amount);
+/* Decreases both timers by 1 step, if they are not already zero. 
+ * This function should be called 60 times per second (or once per frame). */
+void timers_step(struct Hardware *hw);
 
 #endif /* ifndef _HARDWARE_ */
