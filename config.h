@@ -56,7 +56,7 @@ struct Config
 	   Set 1 for modern behavior (default), not affecting the flag. */
 	int LOGIC_FLAG_BEHAVIOR;
 	
-	/* Draw and clear calls wait for the first cycle of the frame.
+	/* Draw calls wait for the first cycle of the frame.
 	   Set 0 for normal behavior (default), namely to never wait.
 	   Set 1 for enabling quirk, namely to wait for vblank. */
 	int QUIRK_WAIT_VBLANK;

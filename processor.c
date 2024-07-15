@@ -51,15 +51,7 @@ int execute(struct Hardware *hw, uint8_t *instruction, int cycle)
 			/* 00E0 Clear screen */
 			if (NNN(instruction) == 0x0E0)
 			{
-				if (!CONFIG.QUIRK_WAIT_VBLANK || cycle == 0)
-				{
-					display_clear(&hw->display);
-				}
-				else
-				{
-					/* Wait for VBLANK (first cycle) */
-					hw->pc-=2;
-				}
+				display_clear(&hw->display);
 			}
 			/* 00EE Subroutine (return) */
 			else if (NNN(instruction) == 0x0EE)
