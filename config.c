@@ -17,6 +17,8 @@ int load_config()
 	CONFIG.INSTRUCTIONS_PER_SECOND = 1000;
 	CONFIG.DISPLAY_SCALE = 10;
 	CONFIG.PIXEL_GRID_GAP = 0;
+	CONFIG.DOUBLE_BUFFERING = 1;
+	CONFIG.RENDER_UNCHANGED_FRAMES = 0;
 	CONFIG.DEBUG = 0; 
 	CONFIG.SHIFT_BEHAVIOR = 1;
 	CONFIG.JUMP_OFFSET_BEHAVIOR = 0;
@@ -66,6 +68,14 @@ int load_config()
 			else if (0 == strcmp(entry, "PIXEL_GRID_GAP"))
 			{
 				CONFIG.PIXEL_GRID_GAP = atoi(value);
+			}
+			else if (0 == strcmp(entry, "DOUBLE_BUFFERING"))
+			{
+				CONFIG.DOUBLE_BUFFERING = atoi(value);
+			}
+			else if (0 == strcmp(entry, "RENDER_UNCHANGED_FRAMES"))
+			{
+				CONFIG.RENDER_UNCHANGED_FRAMES = atoi(value);
 			}
 			else if (0 == strcmp(entry, "DEBUG"))
 			{

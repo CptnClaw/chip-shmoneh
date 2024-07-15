@@ -10,6 +10,7 @@ void graphics_init(struct Graphics *gfx, char *window_title)
 	gfx->height = LOGICAL_DISPLAY_H * CONFIG.DISPLAY_SCALE;
 	gfx->buffer = malloc(sizeof(uint32_t) * gfx->height * gfx->width);
 	memset(gfx->buffer, BLACK, sizeof(uint32_t) * gfx->height * gfx->width);
+	display_init(&(gfx->prev_frame));
 
 	/* Initialize SDL and open window */
 	SDL_Init(SDL_INIT_VIDEO);
@@ -37,7 +38,7 @@ void graphics_free(struct Graphics *gfx)
 	SDL_Quit();
 }
 
-void put_to_buffer(uint32_t *pixels, uint32_t *buffer)
+void put_to_buffer(uint32_t *pixels, struct Graphics *gfx)
 {
 	for (int x=0; x<LOGICAL_DISPLAY_W; x++)
 	{
@@ -50,11 +51,21 @@ void put_to_buffer(uint32_t *pixels, uint32_t *buffer)
 			
 			uint32_t value = pixels[y * LOGICAL_DISPLAY_W + x];
 			
+			// Double buffering: use OR with previous frame to reduce flicker
+			if (CONFIG.DOUBLE_BUFFERING)
+			{
+				uint32_t prev_value = gfx->prev_frame.pixels[y * LOGICAL_DISPLAY_W + x];
+				if (prev_value == WHITE)	
+				{
+					value = WHITE;
+				}
+			}
+			
 			for (int i = gap ; i < CONFIG.DISPLAY_SCALE - gap ; i++)
 			{
 				for (int j = gap ; j < CONFIG.DISPLAY_SCALE - gap ; j++)
 				{
-					buffer[(vis_y+i)*vis_w + (vis_x+j)] = value;	
+					gfx->buffer[(vis_y+i)*vis_w + (vis_x+j)] = value;	
 				}
 			}
 		}
@@ -63,15 +74,16 @@ void put_to_buffer(uint32_t *pixels, uint32_t *buffer)
 
 void graphics_render(struct Graphics *gfx, struct Display *display)
 {
-	if (display->should_be_rendered)
+	if (CONFIG.RENDER_UNCHANGED_FRAMES || display->should_be_rendered)
 	{
-		put_to_buffer(display->pixels, gfx->buffer);
+		put_to_buffer(display->pixels, gfx);
+		if (CONFIG.DOUBLE_BUFFERING)
+		{
+			memcpy(gfx->prev_frame.pixels, display->pixels, sizeof(uint32_t)*DISPLAY_SIZE);
+		}
 		SDL_UpdateTexture(gfx->texture, NULL, gfx->buffer, sizeof(uint32_t) * gfx->width);
-		/* SDL_RenderClear(gfx->renderer); */
 		SDL_RenderCopy(gfx->renderer, gfx->texture, NULL, &(gfx->rect));
 		SDL_RenderPresent(gfx->renderer);
 		display->should_be_rendered = 0;
 	}
 }
-
-

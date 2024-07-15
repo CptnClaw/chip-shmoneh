@@ -12,6 +12,9 @@ struct Graphics
 
 	/* Buffer of black and white pixels, scaled to fit rect */
 	uint32_t *buffer;
+	
+	/* Keep a copy of previous frame for double buffering (reduce flicker) */
+	struct Display prev_frame;
 
 	/* SDL variables used to directly draw to the screen */
 	SDL_Window *window;

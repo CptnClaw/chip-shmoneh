@@ -15,6 +15,19 @@ struct Config
 	/* Must be non-negative and at most DISPLAY_SCALE / 2. */
 	int PIXEL_GRID_GAP; 
 
+	/* Default 1 */
+	/* Double buffering may be used to reduce flickering */
+	/* Set 0 to not use double buffering. */
+	/* Set 1 to use double buffering. */
+	int DOUBLE_BUFFERING;
+	
+	/* Default 0 */
+	/* Render every frame even if unchanged from previous frame. */
+	/* Not recommended due to being computationally expensive 
+	/* but might mitigate some visual artifacts caused by double buffering, */
+	/* for example in the test rom 6-keypad.ch8. */
+	int RENDER_UNCHANGED_FRAMES;
+
 	/* 0=No debug info, 1=Instruction, 2=Instruction+disasm */
 	int DEBUG; 
 
