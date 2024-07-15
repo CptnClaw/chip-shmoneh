@@ -24,7 +24,6 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 		return 0;
 	}
 	srand(time(NULL));
-	clock_reset(hw);
 	hw->is_turned_on = 1;
 	hw->is_waiting_key = 0;
 	return 1;
@@ -144,35 +143,4 @@ void timer_delay_set(struct Hardware *hw, uint8_t amount)
 void timer_sound_set(struct Hardware *hw, uint8_t amount)
 {
 	hw->timer_sound = SDL_GetTicks64() + TIMER_TO_MS(amount);
-}
-
-void clock_reset(struct Hardware *hw)
-{
-	hw->clock = SDL_GetTicks64();
-	hw->num_ticks = 0;
-}
-
-void clock_tick(struct Hardware *hw)
-{
-	hw->num_ticks++;
-	if (hw->num_ticks == INST_PER_10MS)
-	{
-		if ((unsigned int)((hw->clock + 1) - SDL_GetTicks64()) != 1) 
-		{
-			/* printf("%dms\n", (unsigned int)((hw->clock + 10) - SDL_GetTicks64())); */
-		}
-		while (SDL_GetTicks64() < (hw->clock + 10))
-		{
-			/* Do nothing */
-		}
-		clock_reset(hw);
-	}
-	else if (hw->num_ticks > CONFIG.INSTRUCTIONS_PER_SECOND) 
-	{
-		printf("ERROR: Ran too many instructions, something is wrong with the clock\n");
-	}
-	else
-	{
-		events_handle(hw);
-	}
 }

@@ -32,10 +32,6 @@ struct Hardware
 	int is_waiting_key;
 	int prev_keyboard[16]; 
 
-	/* Clock */
-	Uint64 clock;
-	int num_ticks;
-
 	/* Misc hardware */
 	int is_turned_on;
 	Uint64 timer_delay;
@@ -101,13 +97,5 @@ void timer_delay_set(struct Hardware *hw, uint8_t amount);
 /* Sets the value of the sound timer. The units are TIMERS_RATE per second. 
  * A beep will sound while the sound timer is greater than zero. */
 void timer_sound_set(struct Hardware *hw, uint8_t amount);
-
-/* Initializes the clock, starting the timer and zeroing number of ticks */
-void clock_reset(struct Hardware *hw);
-
-/* Increase the number of ticks by one. 
- * Processes incoming events while making sure the number of instructions per second
- * does not exceed INSTRUCTIONS_PER_SECOND */
-void clock_tick(struct Hardware *hw);
 
 #endif /* ifndef _HARDWARE_ */
