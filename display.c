@@ -24,11 +24,20 @@ void display_clear(struct Display *display)
 uint8_t draw_sprite_line(uint32_t *pixels, int x, int y, uint8_t line)
 {
 	uint8_t has_collision = 0;
-	for (uint8_t j=0; j<8 && x+j<LOGICAL_DISPLAY_W; j++)
+	for (uint8_t j = 0; j < 8; j++)
 	{
+		uint8_t column = x+j;
+		if (!CONFIG.PIXEL_CLIP_BEHAVIOR)
+		{
+			column = column % LOGICAL_DISPLAY_W;
+		}
+		if (column >= LOGICAL_DISPLAY_W)
+		{
+			break;
+		}
 		if ((line & (128 >> j)) != 0)
 		{
-			int location = y * LOGICAL_DISPLAY_W + x + j;
+			int location = y * LOGICAL_DISPLAY_W + column;
 			uint32_t cur_val = pixels[location];
 			uint32_t new_val = BLACK;
 			if (cur_val == BLACK)	new_val = WHITE;
@@ -44,9 +53,18 @@ void display_draw(struct Display *display, uint8_t x, uint8_t y, uint8_t *sprite
 	x = x % LOGICAL_DISPLAY_W;
 	y = y % LOGICAL_DISPLAY_H;
 	(*collision) = 0;
-	for (uint8_t i=0; i<sprite_height && y+i<LOGICAL_DISPLAY_H; i++)
+	for (uint8_t i = 0; i < sprite_height; i++)
 	{
-		(*collision) |= draw_sprite_line(display->pixels, x, y+i, *(sprite+i));
+		uint8_t line = y+i;
+		if (!CONFIG.PIXEL_CLIP_BEHAVIOR)
+		{
+			line = line % LOGICAL_DISPLAY_H;
+		}
+		if (line >= LOGICAL_DISPLAY_H)
+		{
+			break;
+		}
+		(*collision) |= draw_sprite_line(display->pixels, x, line, *(sprite+i));
 	}
 	display->should_be_rendered = 1;
 }

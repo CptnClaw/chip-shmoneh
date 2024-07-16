@@ -24,7 +24,9 @@ int load_config()
 	CONFIG.JUMP_OFFSET_BEHAVIOR = 0;
 	CONFIG.ADD_INDEX_BEHAVIOR = 1;
 	CONFIG.STORE_MEM_BEHAVIOR = 1;
-	CONFIG.LOGIC_FLAG_BEHAVIOR = 1;
+	CONFIG.QUIRK_RESET_FLAG = 0;
+	CONFIG.QUIRK_WAIT_VBLANK = 0;
+	CONFIG.PIXEL_CLIP_BEHAVIOR = 1;
 
 	/* Set values from configuration file */
 	FILE *file;
@@ -97,13 +99,17 @@ int load_config()
 			{
 				CONFIG.STORE_MEM_BEHAVIOR = atoi(value);
 			}
-			else if (0 == strcmp(entry, "LOGIC_FLAG_BEHAVIOR"))
+			else if (0 == strcmp(entry, "QUIRK_RESET_FLAG"))
 			{
-				CONFIG.LOGIC_FLAG_BEHAVIOR = atoi(value);
+				CONFIG.QUIRK_RESET_FLAG = atoi(value);
 			}
 			else if (0 == strcmp(entry, "QUIRK_WAIT_VBLANK"))
 			{
 				CONFIG.QUIRK_WAIT_VBLANK = atoi(value);
+			}
+			else if (0 == strcmp(entry, "PIXEL_CLIP_BEHAVIOR"))
+			{
+				CONFIG.PIXEL_CLIP_BEHAVIOR = atoi(value);
 			}
 			else
 			{
@@ -135,5 +141,5 @@ void print_config()
 	printf("JUMP_OFFSET_BEHAVIOR = %d\n", CONFIG.JUMP_OFFSET_BEHAVIOR);
 	printf("ADD_INDEX_BEHAVIOR = %d\n", CONFIG.ADD_INDEX_BEHAVIOR);
 	printf("STORE_MEM_BEHAVIOR = %d\n", CONFIG.STORE_MEM_BEHAVIOR);
-	printf("LOGIC_FLAG_BEHAVIOR = %d\n", CONFIG.LOGIC_FLAG_BEHAVIOR);
+	printf("QUIRK_RESET_FLAG = %d\n", CONFIG.QUIRK_RESET_FLAG);
 }

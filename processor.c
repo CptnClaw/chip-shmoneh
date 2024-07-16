@@ -137,7 +137,7 @@ int execute(struct Hardware *hw, uint8_t *instruction, int cycle)
 				case 0x1:
 					hw->variables[X(instruction)] |=
 						hw->variables[Y(instruction)];
-					if (CONFIG.LOGIC_FLAG_BEHAVIOR == 0) 
+					if (CONFIG.QUIRK_RESET_FLAG == 0) 
 					{
 						hw->variables[FLAG_REG] = 0;
 					}
@@ -146,7 +146,7 @@ int execute(struct Hardware *hw, uint8_t *instruction, int cycle)
 				case 0x2:
 					hw->variables[X(instruction)] &=
 						hw->variables[Y(instruction)];
-					if (CONFIG.LOGIC_FLAG_BEHAVIOR == 0) 
+					if (CONFIG.QUIRK_RESET_FLAG == 0) 
 					{
 						hw->variables[FLAG_REG] = 0;
 					}
@@ -155,7 +155,7 @@ int execute(struct Hardware *hw, uint8_t *instruction, int cycle)
 				case 0x3:
 					hw->variables[X(instruction)] ^=
 						hw->variables[Y(instruction)];
-					if (CONFIG.LOGIC_FLAG_BEHAVIOR == 0) 
+					if (CONFIG.QUIRK_RESET_FLAG == 0) 
 					{
 						hw->variables[FLAG_REG] = 0;
 					}

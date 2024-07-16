@@ -54,12 +54,17 @@ struct Config
 	/* Quirk in instructions 8XY1, 8XY2, 8XY3.
 	   Set 0 for legacy behavior, namely reset the flag to zero.
 	   Set 1 for modern behavior (default), not affecting the flag. */
-	int LOGIC_FLAG_BEHAVIOR;
+	int QUIRK_RESET_FLAG;
 	
 	/* Draw calls wait for the first cycle of the frame.
 	   Set 0 for normal behavior (default), namely to never wait.
 	   Set 1 for enabling quirk, namely to wait for vblank. */
 	int QUIRK_WAIT_VBLANK;
+
+	/* Whether pixels drawn below display edge are clipped or wrapped. 
+	   Set 0 for wrapping around to the top of the display. 
+	   Set 1 for clipping (default). */
+	int PIXEL_CLIP_BEHAVIOR;
 };
 
 extern struct Config CONFIG;
