@@ -5,8 +5,12 @@ struct Commands
 {
 	// Controls whether FPS should be restricted to 60 FPS or unrestricted
 	int restrict_speed;
+	
+	// Next frame should be saved or loaded from file
+	int save_state;
+	int load_state; 
 };
 
-int commands_init(struct Commands *cmd);
+void commands_init(struct Commands *cmd);
 
 #endif /* ifndef _COMMANDS_ */
