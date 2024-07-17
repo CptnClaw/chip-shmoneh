@@ -26,11 +26,14 @@ void clock_tick(struct Clock *clk)
 	}
 }
 
-void clock_tock(struct Clock *clk)
+void clock_tock(struct Clock *clk, int restrict_speed)
 {
-	Uint64 time_after = SDL_GetTicks64();
-	Uint32 time_interval = time_after - clk->time_before;
-	Uint32 time_to_wait = MS_PER_FRAME > time_interval ? MS_PER_FRAME - time_interval : 0;
-	SDL_Delay(time_to_wait);
+	if (restrict_speed)
+	{
+		Uint64 time_after = SDL_GetTicks64();
+		Uint32 time_interval = time_after - clk->time_before;
+		Uint32 time_to_wait = MS_PER_FRAME > time_interval ? MS_PER_FRAME - time_interval : 0;
+		SDL_Delay(time_to_wait);
+	}
 }
 

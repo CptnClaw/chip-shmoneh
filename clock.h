@@ -24,7 +24,7 @@ void clock_init(struct Clock *clk);
 void clock_tick(struct Clock *clk);
 
 // Call this is at the end of main loop.
-// Sleeps until ready for next frame.
-void clock_tock(struct Clock *clk);
+// If restrict_speed is true, sleeps until ready for next frame.
+void clock_tock(struct Clock *clk, int restrict_speed);
 
 #endif /* ifndef _CLOCK_ */

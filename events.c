@@ -1,6 +1,6 @@
 #include "events.h"
 
-int events_handle(struct Hardware *hw)
+int events_handle(struct Hardware *hw, struct Commands *cmd)
 {
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
@@ -34,6 +34,7 @@ int events_handle(struct Hardware *hw)
 					case SDL_SCANCODE_X: keyboard_press(hw, 0x0); break;
 					case SDL_SCANCODE_C: keyboard_press(hw, 0xB); break;
 					case SDL_SCANCODE_V: keyboard_press(hw, 0xF); break;
+					case SDL_SCANCODE_SPACE: cmd->restrict_speed = 0; break;
 					default: break;
 				}
 				break;
@@ -56,6 +57,7 @@ int events_handle(struct Hardware *hw)
 					case SDL_SCANCODE_X: keyboard_release(hw, 0x0); break;
 					case SDL_SCANCODE_C: keyboard_release(hw, 0xB); break;
 					case SDL_SCANCODE_V: keyboard_release(hw, 0xF); break;
+					case SDL_SCANCODE_SPACE: cmd->restrict_speed = 1; break;
 					default: break;
 				}
 				break;

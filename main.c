@@ -4,6 +4,7 @@
 #include "events.h"
 #include "graphics.h"
 #include "clock.h"
+#include "commands.h"
 
 int main(int argc, char *argv[])
 {
@@ -22,9 +23,11 @@ int main(int argc, char *argv[])
 	struct Hardware hw;
 	struct Graphics gfx;
 	struct Clock clk;
+	struct Commands cmd;
 	hardware_init(&hw, rom_path);
 	graphics_init(&gfx, rom_path);
 	clock_init(&clk);
+	commands_init(&cmd);
 
 	int running = 1;
 	uint8_t instruction[2];
@@ -37,11 +40,11 @@ int main(int argc, char *argv[])
 		for (int i=0; i < IPF; i++)
 		{
 			running = hw.is_turned_on &&
-					events_handle(&hw) &&
+					events_handle(&hw, &cmd) &&
 					fetch(&hw, instruction) &&
 					execute(&hw, instruction, i);
 		}
-		clock_tock(&clk);
+		clock_tock(&clk, cmd.restrict_speed);
 	}
 	hardware_free(&hw);
 	graphics_free(&gfx);
