@@ -1,7 +1,8 @@
 # chip-shmoneh
 An emulator (or interpreter) for the [CHIP-8](https://en.wikipedia.org/wiki/CHIP-8) virtual machine.
 
-![Title Image](https://ysfm.co.il/c1.gif)
+![Title Image](https://ysfm.co.il/chip8/chip3.gif) ![Title Image](https://ysfm.co.il/chip8/chip2.gif)
+![Title Image](https://ysfm.co.il/chip8/chip1.gif) ![Title Image](https://ysfm.co.il/chip8/chip4.gif)
 
 ## Features
 * High compatibility with CHIP-8 roms from all across the internet.
@@ -31,5 +32,5 @@ Usage is
 To configure, edit `chip-shmoneh.conf`. It is a simple space-delimited text file. See comments inside for more information.
 
 ## Dependencies
-* SDL2
+* [SDL2](https://www.libsdl.org/)
 
