@@ -1,5 +1,5 @@
 # chip-shmoneh
-An emulator (or interpreter) for the [https://en.wikipedia.org/wiki/CHIP-8](CHIP-8 virtual machine).
+An emulator (or interpreter) for the [CHIP-8](https://en.wikipedia.org/wiki/CHIP-8) virtual machine.
 
 ![Title Image](https://ysfm.co.il/c1.gif)
 
