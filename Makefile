@@ -1,6 +1,6 @@
 CC=clang
 CSTD=-std=c11
-SOURCE=config.c debug.c events.c graphics.c hardware.c main.c processor.c stack.c display.c clock.c commands.c
+SOURCE=src/*.c
 OUTPUT=chip-shmoneh
 DEBUG=-g3 -O0
 TEST=roms/2-ibm-logo.ch8
