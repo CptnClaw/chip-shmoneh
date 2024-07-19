@@ -39,10 +39,13 @@ int main(int argc, char *argv[])
 		timers_step(&hw);
 		for (int i=0; i < IPF; i++)
 		{
-			running = hw.is_turned_on &&
-					events_handle(&hw, &cmd) &&
-					fetch(&hw, instruction) &&
-					execute(&hw, instruction, i);
+			running = hw.is_turned_on && 
+				events_handle(&hw, &cmd);
+			if (!cmd.pause)
+			{
+				running = running && 
+					fetch(&hw, instruction) && execute(&hw, instruction, i);
+			}
 		}
 		clock_tock(&clk, cmd.restrict_speed);
 	}

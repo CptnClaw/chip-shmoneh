@@ -16,6 +16,11 @@ int events_handle(struct Hardware *hw, struct Commands *cmd)
 					hw->is_turned_on = 0;
 					return 0;
 				}
+				if (event.key.keysym.sym == SDLK_F3)
+				{
+					cmd->pause = !cmd->pause;
+					printf("toggle pause\n");
+				}
 				switch (event.key.keysym.scancode)
 				{
 					case SDL_SCANCODE_1: keyboard_press(hw, 0x1); break;

@@ -9,6 +9,9 @@ struct Commands
 	// Next frame should be saved or loaded from file
 	int save_state;
 	int load_state; 
+
+	// Pause emulation while this is true
+	int pause;
 };
 
 void commands_init(struct Commands *cmd);
