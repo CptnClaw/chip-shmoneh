@@ -8,6 +8,10 @@
 #define BLACK 	0
 #define WHITE	-1
 
+#define COLOR_BW 			0
+#define COLOR_RAINBOW 		1
+#define COLOR_PER_SPRITE 	2
+
 struct Display
 {
 	/* Buffer of black and white pixels */
@@ -16,6 +20,13 @@ struct Display
 	/* Will be set to TRUE whenever display_clear or display_draw are called. */
 	/* Graphics library should reset to FALSE after rendering to avoid redundant renderings. */
 	int should_be_rendered;
+	
+	/* Color options to be used on the display. */
+	uint32_t *colors_pallete;
+	
+	/* The color index to use for the next sprite */
+	/* To be used when CONFIG.COLORS is 2 (COLOR_PER_SPRITE). */
+	int cur_color;
 };
 
 /* Allocates pixels and initializes. Call this function before using display. */

@@ -55,9 +55,9 @@ void put_to_buffer(uint32_t *pixels, struct Graphics *gfx)
 			if (CONFIG.DOUBLE_BUFFERING)
 			{
 				uint32_t prev_value = gfx->prev_frame.pixels[y * LOGICAL_DISPLAY_W + x];
-				if (prev_value == WHITE)	
+				if (prev_value != BLACK)	
 				{
-					value = WHITE;
+					value = prev_value;
 				}
 			}
 			
