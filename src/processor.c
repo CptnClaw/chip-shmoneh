@@ -315,13 +315,6 @@ int execute(struct Hardware *hw, uint8_t *instruction, int cycle)
 					break;
 				/* FX1E Add to index */
 				case 0x1E: 
-					if (CONFIG.ADD_INDEX_BEHAVIOR == 1 &&
-						hw->variables[X(instruction)] >
-						0x0FFF - hw->index)
-					{
-						/* Overflow of index above 0x0FFF */
-						hw->variables[FLAG_REG] = 1;
-					}
 					hw->index += hw->variables[X(instruction)];
 					break;
 				/* 0xFX0A Get key */

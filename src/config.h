@@ -41,11 +41,6 @@ struct Config
 	 *	   Set 1 for modern behavior, jump to index+VX. */
 	int JUMP_OFFSET_BEHAVIOR;
 
-	/* Instruction FX1E is ambiguous.
-	 *	   Set 0 for legacy behavior.
-	 *	   Set 1 for modern behavior (default). */
-	int ADD_INDEX_BEHAVIOR;
-
 	/* Instructions FX55 and FX65 are ambiguous.
 	 *	   Set 0 for legacy behavior, namely increment the index after loading/saving memory.
 	 *	   Set 1 for modern behavior (default), leaving the index unaffected. */

@@ -22,7 +22,6 @@ int load_config()
 	CONFIG.DEBUG = 0;
 	CONFIG.SHIFT_BEHAVIOR = 1;
 	CONFIG.JUMP_OFFSET_BEHAVIOR = 0;
-	CONFIG.ADD_INDEX_BEHAVIOR = 1;
 	CONFIG.STORE_MEM_BEHAVIOR = 1;
 	CONFIG.QUIRK_RESET_FLAG = 0;
 	CONFIG.QUIRK_WAIT_VBLANK = 0;
@@ -123,10 +122,6 @@ int load_config()
 			else if (0 == strcmp(entry, "JUMP_OFFSET_BEHAVIOR"))
 			{
 				CONFIG.JUMP_OFFSET_BEHAVIOR = atoi(value);
-			}
-			else if (0 == strcmp(entry, "ADD_INDEX_BEHAVIOR"))
-			{
-				CONFIG.ADD_INDEX_BEHAVIOR = atoi(value);
 			}
 			else if (0 == strcmp(entry, "STORE_MEM_BEHAVIOR"))
 			{
@@ -312,7 +307,6 @@ void print_config()
 	printf("DEBUG = %d\n", CONFIG.DEBUG );
 	printf("SHIFT_BEHAVIOR = %d\n", CONFIG.SHIFT_BEHAVIOR);
 	printf("JUMP_OFFSET_BEHAVIOR = %d\n", CONFIG.JUMP_OFFSET_BEHAVIOR);
-	printf("ADD_INDEX_BEHAVIOR = %d\n", CONFIG.ADD_INDEX_BEHAVIOR);
 	printf("STORE_MEM_BEHAVIOR = %d\n", CONFIG.STORE_MEM_BEHAVIOR);
 	printf("QUIRK_RESET_FLAG = %d\n", CONFIG.QUIRK_RESET_FLAG);
 	printf("CUSTOM_COLORS = %d\n", CONFIG.CUSTOM_COLORS);
