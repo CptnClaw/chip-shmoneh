@@ -57,7 +57,6 @@ uint16_t load_rom(char *rom_path, uint8_t *memory)
 	}
 
 	int rom_size = rom_stat.st_size;
-	/* printf("%s weighs %d bytes\n", rom_path, rom_size); */
 	if (rom_size + MEM_LOC_FONT > MEM_SIZE)
 	{
 		printf("Error: ROM file too large\n");

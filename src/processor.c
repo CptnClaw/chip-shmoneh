@@ -355,22 +355,36 @@ int execute(struct Hardware *hw, uint8_t *instruction, int cycle)
 				case 0x55: 
 					for (int i=0; i<=X(instruction); i++)
 					{
-						hw->memory[hw->index + i] = hw->variables[i];
+						if (hw->index + i < 0xFFF)
+						{
+							hw->memory[hw->index + i] = hw->variables[i];
+						}
 					}
 					if (CONFIG.STORE_MEM_BEHAVIOR == 0)
 					{
 						hw->index += X(instruction) + 1;
+						if (hw->index > 0xFFF)
+						{
+							hw->index = 0xFFF;
+						}
 					}
 					break;
 				/* FX65 Load memory */
 				case 0x65: 
 					for (int i=0; i<=X(instruction); i++)
 					{
-						hw->variables[i] = hw->memory[hw->index + i];
+						if (hw->index + i < 0xFFF)
+						{
+							hw->variables[i] = hw->memory[hw->index + i];
+						}
 					}
 					if (CONFIG.STORE_MEM_BEHAVIOR == 0)
 					{
 						hw->index += X(instruction) + 1;
+						if (hw->index > 0xFFF)
+						{
+							hw->index = 0xFFF;
+						}
 					}
 					break;
 				default:

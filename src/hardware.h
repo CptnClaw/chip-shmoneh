@@ -34,8 +34,8 @@ struct Hardware
 
 	/* Misc hardware */
 	int is_turned_on;
-	Uint64 timer_delay;
-	Uint64 timer_sound;
+	int timer_delay;
+	int timer_sound;
 };
 
 /* Loads the ROM and initializes all members.
