@@ -10,6 +10,7 @@ An emulator (or interpreter) for the [CHIP-8](https://en.wikipedia.org/wiki/CHIP
 * Reduce graphical flickering using a double buffer method.
 * Configurable pixel grid.
 * Configurable CPU speed. Hold spacebar to run unrestricted. FPS is printed to standard output.
+* Various optional color modes.
 * (Coming soon) Audio.
 * (Coming soon) Save states and rewind.
 
