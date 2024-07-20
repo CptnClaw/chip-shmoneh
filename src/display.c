@@ -10,14 +10,14 @@ void display_init(struct Display *display)
 {
 	display->pixels = malloc(sizeof(uint32_t) * DISPLAY_SIZE);
 	display->colors_pallete = malloc(sizeof(uint32_t) * PALETTE_SIZE);
-	display->colors_pallete[0] = 16711680;
-	display->colors_pallete[1] = 16743168;
-	display->colors_pallete[2] = 16776960;
-	display->colors_pallete[3] = 65280;
-	display->colors_pallete[4] = 65403;
-	display->colors_pallete[5] = 65535;
-	display->colors_pallete[6] = 255;
-	display->colors_pallete[7] = 16711935;
+	display->colors_pallete[0] = 0xFF0000;
+	display->colors_pallete[1] = 0xFF7B00;
+	display->colors_pallete[2] = 0xFFFF00;
+	display->colors_pallete[3] = 0x00FF00;
+	display->colors_pallete[4] = 0x00FF7B;
+	display->colors_pallete[5] = 0x00FFFF;
+	display->colors_pallete[6] = 0x0000FF;
+	display->colors_pallete[7] = 0xFF00FF;
 	display->cur_color = 0;
 	display_clear(display);
 }
