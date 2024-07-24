@@ -338,17 +338,20 @@ int execute(struct Hardware *hw, uint8_t *instruction, int cycle)
 				/* FX33 Binary-decimal conversion */
 				case 0x33: 
 					temp = hw->variables[X(instruction)];
-					hw->memory[hw->index] = temp / 100;
+					if (hw->index <= 0xFFF)
+						hw->memory[hw->index] = temp / 100;
 					temp = temp % 100;
-					hw->memory[hw->index + 1] = temp / 10;
+					if (hw->index + 1 <= 0xFFF)
+						hw->memory[hw->index + 1] = temp / 10;
 					temp = temp % 10;
-					hw->memory[hw->index + 2] = temp;
+					if (hw->index <= 0xFFF)
+						hw->memory[hw->index + 2] = temp;
 					break;
 				/* FX55 Store memory */
 				case 0x55: 
 					for (int i=0; i<=X(instruction); i++)
 					{
-						if (hw->index + i < 0xFFF)
+						if (hw->index + i <= 0xFFF)
 						{
 							hw->memory[hw->index + i] = hw->variables[i];
 						}
@@ -366,9 +369,13 @@ int execute(struct Hardware *hw, uint8_t *instruction, int cycle)
 				case 0x65: 
 					for (int i=0; i<=X(instruction); i++)
 					{
-						if (hw->index + i < 0xFFF)
+						if (hw->index + i <= 0xFFF)
 						{
 							hw->variables[i] = hw->memory[hw->index + i];
+						}
+						else
+						{
+							hw->variables[i] = 0;
 						}
 					}
 					if (CONFIG.STORE_MEM_BEHAVIOR == 0)

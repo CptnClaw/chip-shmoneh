@@ -64,6 +64,7 @@ uint16_t load_rom(char *rom_path, uint8_t *memory)
 	}
 
 	/* Read ROM file directly to memory in the correct location */
+	memset(memory, 0, sizeof(uint8_t)*MEM_LOC_PROG);
 	fread(memory + MEM_LOC_PROG, rom_size * sizeof(uint8_t), 1, rom_file);
 
 	fclose(rom_file);
