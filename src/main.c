@@ -39,8 +39,23 @@ int main(int argc, char *argv[])
 		timers_step(&hw);
 		for (int i=0; i < IPF; i++)
 		{
+			/* Process keyboard and window events */
 			running = hw.is_turned_on && 
 				events_handle(&hw, &cmd);
+			
+			/* If requested, save or load state */
+			if (cmd.save_state)
+			{
+				save_state(&hw);
+				cmd.save_state = 0;
+			}
+			if (cmd.load_state)
+			{
+				load_state(&hw);
+				cmd.load_state = 0;
+			}
+			
+			/* If not paused, run emulation cycle */
 			if (!cmd.pause)
 			{
 				running = running && 
@@ -49,7 +64,6 @@ int main(int argc, char *argv[])
 		}
 		clock_tock(&clk, cmd.restrict_speed);
 	}
-	hardware_free(&hw);
 	graphics_free(&gfx);
 	return 0;
 }

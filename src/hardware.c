@@ -26,12 +26,18 @@ int hardware_init(struct Hardware *hw, char *rom_path)
 	srand(time(NULL));
 	hw->is_turned_on = 1;
 	hw->is_waiting_key = 0;
-	return 1;
-}
 
-void hardware_free(struct Hardware *hw)
-{
-	display_free(&(hw->display));
+	int len = strlen(rom_path);
+	memcpy(hw->save_file_path, rom_path, sizeof(char) * (len+1));
+	memcpy(hw->save_file_path + len - 3, "sav", sizeof(char) * 3); 
+	if (CONFIG.AUTOLOAD)
+	{
+		if (!load_state(hw))
+		{
+			printf("Failed to autoload state file\n");
+		}
+	}
+	return 1;
 }
 
 int load_font(uint8_t *memory)
@@ -42,6 +48,19 @@ int load_font(uint8_t *memory)
 
 uint16_t load_rom(char *rom_path, uint8_t *memory)
 {
+	int len = strlen(rom_path);
+	if (len > MAX_FILEPATH_SIZE)
+	{
+		printf("ROM file path too long (%d). Supported up to %d\n", len, MAX_FILEPATH_SIZE);
+		return 0;
+	}
+
+	if (0 != strcmp(rom_path + len - 4, ".ch8"))
+	{
+		printf("ROM file path must end in .ch8\n");
+		return 0;
+	}
+
 	FILE *rom_file = fopen(rom_path, "rb");
 	if (!rom_file)
 	{
@@ -128,4 +147,46 @@ void timers_step(struct Hardware *hw)
 {
 	if (hw->timer_delay > 0) 	hw->timer_delay--;
 	if (hw->timer_sound > 0) 	hw->timer_sound--;
+}
+
+int save_state(struct Hardware *hw)
+{
+	FILE *state_file = fopen(hw->save_file_path, "wb");
+	if (!state_file)
+	{
+		printf("Cannot open state file: %s\n", hw->save_file_path);
+		return 0;
+	}
+	
+	fwrite(hw, sizeof(struct Hardware), 1, state_file);
+	fclose(state_file);
+	return 1;
+}
+
+int load_state(struct Hardware *hw)
+{
+	FILE *state_file = fopen(hw->save_file_path, "rb");
+	if (!state_file)
+	{
+		printf("Cannot open state file: %s\n", hw->save_file_path);
+		return 0;
+	}
+
+	struct stat state_stat;
+	if (stat(hw->save_file_path, &state_stat) == -1)
+	{
+		printf("Cannot read state file size: %s\n", hw->save_file_path);
+		return 0;
+	}
+
+	int state_size = state_stat.st_size;
+	if (state_size != sizeof(struct Hardware))
+	{
+		printf("Error: Incorrect state file size\n");
+		return 0;
+	}
+	
+	fread(hw, sizeof(struct Hardware), 1, state_file);
+	fclose(state_file);
+	return 1;
 }

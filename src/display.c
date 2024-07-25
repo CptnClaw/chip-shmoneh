@@ -4,12 +4,9 @@
 #include "config.h"
 #include "display.h"
 
-#define PALETTE_SIZE 8	
 
 void display_init(struct Display *display)
 {
-	display->pixels = malloc(sizeof(uint32_t) * DISPLAY_SIZE);
-	display->colors_pallete = malloc(sizeof(uint32_t) * PALETTE_SIZE);
 	display->colors_pallete[0] = 0xFF0000;
 	display->colors_pallete[1] = 0xFF7B00;
 	display->colors_pallete[2] = 0xFFFF00;
@@ -20,12 +17,6 @@ void display_init(struct Display *display)
 	display->colors_pallete[7] = 0xFF00FF;
 	display->cur_color = 0;
 	display_clear(display);
-}
-
-void display_free(struct Display *display)
-{
-	free(display->pixels);
-	free(display->colors_pallete);
 }
 
 void display_clear(struct Display *display)

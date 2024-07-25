@@ -11,6 +11,7 @@
 #define MEM_LOC_PROG 0x200
 #define FONT_WIDTH 5
 #define TIMERS_RATE 60  /* in Hz (updates per second) */
+#define MAX_FILEPATH_SIZE 200
 
 struct Hardware
 {
@@ -36,6 +37,7 @@ struct Hardware
 	int is_turned_on;
 	int timer_delay;
 	int timer_sound;
+	char save_file_path[MAX_FILEPATH_SIZE+1];
 };
 
 /* Loads the ROM and initializes all members.
@@ -44,10 +46,6 @@ struct Hardware
  *		0 if there was a problem loading ROM or font to memory.
  *		1 if successful. */
 int hardware_init(struct Hardware *hw, char *rom_path);
-
-/* Frees allocated resources (graphics).
- * Call this function after you are done using hw! */
-void hardware_free(struct Hardware *hw);
 
 /* Loads font data (from font.h) into memory address MEM_LOC_FONT.
  * Returns:
@@ -91,5 +89,10 @@ int did_any_key_release(struct Hardware *hw);
 /* Decreases both timers by 1 step, if they are not already zero. 
  * This function should be called 60 times per second (or once per frame). */
 void timers_step(struct Hardware *hw);
+
+/* Save/load hardware state to/from the file hw->save_file_path */
+/* Returns 1 if successfull, 0 otherwise. */
+int save_state(struct Hardware *hw);
+int load_state(struct Hardware *hw);
 
 #endif /* ifndef _HARDWARE_ */

@@ -28,6 +28,7 @@ int load_config()
 	CONFIG.QUIRK_WAIT_VBLANK = 0;
 	CONFIG.PIXEL_CLIP_BEHAVIOR = 1;
 	CONFIG.COLOR_MODE = COLOR_BW;
+	CONFIG.AUTOLOAD = 0;
 
 	/* Set values from configuration file */
 	FILE *file;
@@ -111,6 +112,10 @@ int load_config()
 			else if (0 == strcmp(entry, "PIXEL_CLIP_BEHAVIOR"))
 			{
 				CONFIG.PIXEL_CLIP_BEHAVIOR = atoi(value);
+			}
+			else if (0 == strcmp(entry, "AUTOLOAD"))
+			{
+				CONFIG.AUTOLOAD = atoi(value);
 			}
 			else
 			{

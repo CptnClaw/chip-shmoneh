@@ -19,7 +19,7 @@ struct Config
 	int QUIRK_RESET_FLAG;
 	int QUIRK_WAIT_VBLANK;
 	int PIXEL_CLIP_BEHAVIOR;
-
+	int AUTOLOAD;
 };
 extern struct Config CONFIG;
 
