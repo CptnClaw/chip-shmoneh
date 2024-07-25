@@ -26,6 +26,16 @@ void graphics_init(struct Graphics *gfx, char *window_title)
 	SDL_SetRenderDrawColor(gfx->renderer, 0, 0, 0, 0);
 	SDL_RenderClear(gfx->renderer);
 	SDL_RenderPresent(gfx->renderer);
+	
+	/* Define colors */
+	gfx->colors_pallete[0] = 0xFF0000;
+	gfx->colors_pallete[1] = 0xFF7B00;
+	gfx->colors_pallete[2] = 0xFFFF00;
+	gfx->colors_pallete[3] = 0x00FF00;
+	gfx->colors_pallete[4] = 0x00FF7B;
+	gfx->colors_pallete[5] = 0x00FFFF;
+	gfx->colors_pallete[6] = 0x0000FF;
+	gfx->colors_pallete[7] = 0xFF00FF;
 }
 
 void graphics_free(struct Graphics *gfx)
@@ -59,6 +69,11 @@ void put_to_buffer(uint32_t *pixels, struct Graphics *gfx)
 				{
 					value = prev_value;
 				}
+			}
+			
+			if (CONFIG.COLOR_MODE == COLOR_RAINBOW && value != BLACK)
+			{
+				value = gfx->colors_pallete[y * PALETTE_SIZE / LOGICAL_DISPLAY_H];
 			}
 			
 			for (int i = gap ; i < CONFIG.DISPLAY_SCALE - gap ; i++)

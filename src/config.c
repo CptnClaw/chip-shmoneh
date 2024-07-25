@@ -3,6 +3,7 @@
 #include <string.h>
 #include "config.h"
 #include "display.h"
+#include "graphics.h"
 
 #define BUF_LEN 100
 #define CONFIG_PATH "chip-shmoneh.conf"

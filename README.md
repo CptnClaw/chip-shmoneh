@@ -9,11 +9,11 @@ An emulator (or interpreter) for the [CHIP-8](https://en.wikipedia.org/wiki/CHIP
 * Enable or disable quirks via a configuration file.
 * Reduce graphical flickering using a double buffer method.
 * Configurable pixel grid.
-* Configurable CPU speed. Hold spacebar to run unrestricted. FPS is printed to standard output.
-* Save states: Press F1 for quick save and F2 for quick load.
-* Various optional color modes.
+* Configurable CPU speed. 
+* Optional color mode.
+* Save states.
+* (Comint soon) Rewind.
 * (Coming soon) Audio.
-
 
 ## Getting started
 ### Building
@@ -31,6 +31,12 @@ Usage is
 ./chip-shmoneh <rom file>
 ```
 To configure, edit `chip-shmoneh.conf`. It is a simple space-delimited text file. See comments inside for more information.
+
+### Keyboard commands
+* Spacebar (hold) - Run CPU in unlimited speed.
+* F1 - Quick save.
+* F2 - Quick load.
+* F3 - Pause emulation.
 
 ## Dependencies
 * [SDL2](https://www.libsdl.org/)

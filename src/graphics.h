@@ -1,6 +1,13 @@
 #include <SDL.h>
 #include "display.h"
 
+#define BLACK 	0
+#define WHITE	-1
+
+#define COLOR_BW 			0
+#define COLOR_RAINBOW 		1
+#define PALETTE_SIZE 		8	
+
 struct Graphics
 {
 	/* The physical window dimensions,
@@ -9,8 +16,11 @@ struct Graphics
 	int width;
 	int height;
 	SDL_Rect rect;
+	
+	/* Color options to be used on the display. */
+	uint32_t colors_pallete[PALETTE_SIZE];
 
-	/* Buffer of black and white pixels, scaled to fit rect */
+	/* Buffer of (optionally colored) pixels, scaled to fit rect */
 	uint32_t *buffer;
 	
 	/* Keep a copy of previous frame for double buffering (reduce flicker) */
