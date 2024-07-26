@@ -48,39 +48,49 @@ void graphics_free(struct Graphics *gfx)
 	SDL_Quit();
 }
 
-void put_to_buffer(uint32_t *pixels, struct Graphics *gfx)
+void put_to_buffer(uint8_t *pixels, struct Graphics *gfx)
 {
-	for (int x=0; x<LOGICAL_DISPLAY_W; x++)
+	for (int y = 0; y < LOGICAL_DISPLAY_H; y++)
 	{
-		for (int y=0; y<LOGICAL_DISPLAY_H; y++)
+		/* Pick color based on y coordinate */
+		int color = WHITE;
+		if (CONFIG.COLOR_MODE == COLOR_RAINBOW)
 		{
-			int vis_x = x * CONFIG.DISPLAY_SCALE;
-			int vis_y = y * CONFIG.DISPLAY_SCALE;
-			int vis_w = LOGICAL_DISPLAY_W * CONFIG.DISPLAY_SCALE;
-			int gap = CONFIG.PIXEL_GRID_GAP;
+			color = gfx->colors_pallete[y * PALETTE_SIZE / LOGICAL_DISPLAY_H];
+		}
+
+		for (int x_byte = 0; x_byte < LOGICAL_DISPLAY_W / 8; x_byte++)
+		{
+			/* Get a chunk of 8 pixels (byte) to draw */
+			uint8_t byte = pixels[y * (LOGICAL_DISPLAY_W / 8) + x_byte];
+			uint8_t prev_byte = gfx->prev_frame.pixels[y * (LOGICAL_DISPLAY_W / 8) + x_byte];
 			
-			uint32_t value = pixels[y * LOGICAL_DISPLAY_W + x];
-			
-			// Double buffering: use OR with previous frame to reduce flicker
-			if (CONFIG.DOUBLE_BUFFERING)
+			for (int bit = 0; bit < 8; bit++)
 			{
-				uint32_t prev_value = gfx->prev_frame.pixels[y * LOGICAL_DISPLAY_W + x];
-				if (prev_value != BLACK)	
+				/* Calculate on-screen coordinates */
+				int x = x_byte * 8 + bit;
+				int vis_x = x * CONFIG.DISPLAY_SCALE;
+				int vis_y = y * CONFIG.DISPLAY_SCALE;
+				int vis_w = LOGICAL_DISPLAY_W * CONFIG.DISPLAY_SCALE;
+
+				/* Find the value of a specific pixel to draw */
+				int value = (byte >> (8-bit-1)) & 0x01;
+				int prev_value = (prev_byte >> (8-bit-1)) & 0x01;
+
+				// Double buffering: use OR with previous frame to reduce flicker
+				if (CONFIG.DOUBLE_BUFFERING)
 				{
-					value = prev_value;
+					value |= prev_value;
 				}
-			}
-			
-			if (CONFIG.COLOR_MODE == COLOR_RAINBOW && value != BLACK)
-			{
-				value = gfx->colors_pallete[y * PALETTE_SIZE / LOGICAL_DISPLAY_H];
-			}
-			
-			for (int i = gap ; i < CONFIG.DISPLAY_SCALE - gap ; i++)
-			{
-				for (int j = gap ; j < CONFIG.DISPLAY_SCALE - gap ; j++)
+
+				// Draw pixel to screen, surrounded by gap
+				int gap = CONFIG.PIXEL_GRID_GAP;
+				for (int i = gap; i < CONFIG.DISPLAY_SCALE - gap; i++)
 				{
-					gfx->buffer[(vis_y+i)*vis_w + (vis_x+j)] = value;	
+					for (int j = gap; j < CONFIG.DISPLAY_SCALE - gap; j++)
+					{
+						gfx->buffer[(vis_y + i) * vis_w + (vis_x + j)] = value ? color : BLACK;
+					}
 				}
 			}
 		}
@@ -94,7 +104,7 @@ void graphics_render(struct Graphics *gfx, struct Display *display)
 		put_to_buffer(display->pixels, gfx);
 		if (CONFIG.DOUBLE_BUFFERING)
 		{
-			memcpy(gfx->prev_frame.pixels, display->pixels, sizeof(uint32_t)*DISPLAY_SIZE);
+			memcpy(gfx->prev_frame.pixels, display->pixels, sizeof(uint8_t) * DISPLAY_SIZE / 8);
 		}
 		SDL_UpdateTexture(gfx->texture, NULL, gfx->buffer, sizeof(uint32_t) * gfx->width);
 		SDL_RenderCopy(gfx->renderer, gfx->texture, NULL, &(gfx->rect));

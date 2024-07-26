@@ -8,8 +8,8 @@
 
 struct Display
 {
-	/* Buffer of black and white pixels */
-	uint32_t pixels[DISPLAY_SIZE];
+	/* Buffer of black and white pixel bits */
+	uint8_t pixels[DISPLAY_SIZE / 8];
 
 	/* Will be set to TRUE whenever display_clear or display_draw are called. */
 	/* Graphics library should reset to FALSE after rendering to avoid redundant renderings. */
