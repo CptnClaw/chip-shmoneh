@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	graphics_init(&gfx, rom_path);
 	clock_init(&clk);
 	commands_init(&cmd);
-	rewind_init(&rewind);
+	if (CONFIG.ENABLE_REWIND)  rewind_init(&rewind);
 
 	int running = 1;
 	uint8_t instruction[2];
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 			
 			
 			/* If not paused, run emulation cycle */
-			if (!cmd.pause)
+			if (!cmd.pause && !cmd.rewind)
 			{
 				running = running && 
 					fetch(&hw, instruction) && execute(&hw, instruction, i);
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
 		}
 		
 		/* Handle rewind mechanism */
-		if (clk.frame_count % 10 == 0)
+		if (CONFIG.ENABLE_REWIND && clk.frame_count % 10 == 0)
 		{
 			if (cmd.rewind)
 			{

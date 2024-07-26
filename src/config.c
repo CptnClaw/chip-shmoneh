@@ -30,6 +30,7 @@ int load_config()
 	CONFIG.PIXEL_CLIP_BEHAVIOR = 1;
 	CONFIG.COLOR_MODE = COLOR_BW;
 	CONFIG.AUTOLOAD = 0;
+	CONFIG.ENABLE_REWIND = 0;
 
 	/* Set values from configuration file */
 	FILE *file;
@@ -117,6 +118,10 @@ int load_config()
 			else if (0 == strcmp(entry, "AUTOLOAD"))
 			{
 				CONFIG.AUTOLOAD = atoi(value);
+			}
+			else if (0 == strcmp(entry, "ENABLE_REWIND"))
+			{
+				CONFIG.ENABLE_REWIND = atoi(value);
 			}
 			else
 			{

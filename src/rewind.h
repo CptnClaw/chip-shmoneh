@@ -9,7 +9,8 @@
 /* A cyclical, finite stack keeps track of REWIND_SIZE recent states */
 struct Rewind
 {
-	uint8_t stack[REWIND_SIZE][sizeof(struct Hardware)];
+	// uint8_t stack[REWIND_SIZE][sizeof(struct Hardware)];
+	uint8_t **stack;
 	int top_idx;
 	int bottom_idx;
 	int stack_is_full;

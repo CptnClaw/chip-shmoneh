@@ -2,7 +2,12 @@
 #include "rewind.h"
 
 void rewind_init(struct Rewind *rewind)
-{
+{ 
+	rewind->stack = malloc(sizeof(uint8_t*) * REWIND_SIZE);
+	for (int i=0; i < REWIND_SIZE; i++)
+	{
+		rewind->stack[i] = malloc(sizeof(struct Hardware));
+	}
 	rewind->top_idx = 0;
 	rewind->bottom_idx = 0;
 	rewind->stack_is_full = 0;

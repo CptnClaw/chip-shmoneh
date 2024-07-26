@@ -38,7 +38,7 @@ int events_handle(struct Hardware *hw, struct Commands *cmd)
 					case SDL_SCANCODE_F1: cmd->save_state = 1; break;
 					case SDL_SCANCODE_F2: cmd->load_state = 1; break;
 					case SDL_SCANCODE_F3: if (!cmd->rewind) cmd->pause = !cmd->pause; break;
-					case SDL_SCANCODE_F4: cmd->rewind = 1; cmd->pause = 1; break;
+					case SDL_SCANCODE_F4: if (CONFIG.ENABLE_REWIND) cmd->rewind = 1; break;
 					default: break;
 				}
 				break;
@@ -62,7 +62,7 @@ int events_handle(struct Hardware *hw, struct Commands *cmd)
 					case SDL_SCANCODE_C: keyboard_release(hw, 0xB); break;
 					case SDL_SCANCODE_V: keyboard_release(hw, 0xF); break;
 					case SDL_SCANCODE_SPACE: cmd->restrict_speed = 1; break;
-					case SDL_SCANCODE_F4: cmd->rewind = 0; cmd->pause = 0; break;
+					case SDL_SCANCODE_F4: if (CONFIG.ENABLE_REWIND) cmd->rewind = 0; break;
 					default: break;
 				}
 				break;

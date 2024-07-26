@@ -20,6 +20,7 @@ struct Config
 	int QUIRK_WAIT_VBLANK;
 	int PIXEL_CLIP_BEHAVIOR;
 	int AUTOLOAD;
+	int ENABLE_REWIND;
 };
 extern struct Config CONFIG;
 

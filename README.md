@@ -11,8 +11,7 @@ An emulator (or interpreter) for the [CHIP-8](https://en.wikipedia.org/wiki/CHIP
 * Configurable pixel grid.
 * Configurable CPU speed. 
 * Optional color mode.
-* Save states.
-* (Comint soon) Rewind.
+* Save states and rewind.
 * (Coming soon) Audio.
 
 ## Getting started
@@ -36,7 +35,8 @@ To configure, edit `chip-shmoneh.conf`. It is a simple space-delimited text file
 * Spacebar (hold) - Run CPU in unlimited speed.
 * F1 - Quick save.
 * F2 - Quick load.
-* F3 - Pause emulation.
+* F3 - Pause emulation toggle.
+* F4 (hold) - Rewind. Make sure to enable it in the configuration first.
 
 ## Dependencies
 * [SDL2](https://www.libsdl.org/)
