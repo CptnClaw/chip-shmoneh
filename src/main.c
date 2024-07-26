@@ -5,6 +5,7 @@
 #include "graphics.h"
 #include "clock.h"
 #include "commands.h"
+#include "rewind.h"
 
 int main(int argc, char *argv[])
 {
@@ -24,10 +25,12 @@ int main(int argc, char *argv[])
 	struct Graphics gfx;
 	struct Clock clk;
 	struct Commands cmd;
+	struct Rewind rewind;
 	hardware_init(&hw, rom_path);
 	graphics_init(&gfx, rom_path);
 	clock_init(&clk);
 	commands_init(&cmd);
+	rewind_init(&rewind);
 
 	int running = 1;
 	uint8_t instruction[2];
@@ -35,7 +38,7 @@ int main(int argc, char *argv[])
 	while (running)
 	{
 		clock_tick(&clk);
-		graphics_render(&gfx, &hw.display);
+		graphics_render(&gfx, &hw.display, CONFIG.DOUBLE_BUFFERING && !cmd.rewind);
 		timers_step(&hw);
 		for (int i=0; i < IPF; i++)
 		{
@@ -43,17 +46,6 @@ int main(int argc, char *argv[])
 			running = hw.is_turned_on && 
 				events_handle(&hw, &cmd);
 			
-			/* If requested, save or load state */
-			if (cmd.save_state)
-			{
-				save_state(&hw);
-				cmd.save_state = 0;
-			}
-			if (cmd.load_state)
-			{
-				load_state(&hw);
-				cmd.load_state = 0;
-			}
 			
 			/* If not paused, run emulation cycle */
 			if (!cmd.pause)
@@ -62,6 +54,34 @@ int main(int argc, char *argv[])
 					fetch(&hw, instruction) && execute(&hw, instruction, i);
 			}
 		}
+		
+		/* If requested, save or load state */
+		if (cmd.save_state)
+		{
+			save_state(&hw);
+			cmd.save_state = 0;
+		}
+		if (cmd.load_state)
+		{
+			load_state(&hw);
+			cmd.load_state = 0;
+		}
+		
+		/* Handle rewind mechanism */
+		if (clk.frame_count % 10 == 0)
+		{
+			if (cmd.rewind)
+			{
+				/* Rewind to previous state */
+				rewind_pop_state(&rewind, &hw);
+			}
+			else
+			{
+				/* Do not rewind, but remember current state for later use */
+				rewind_push_state(&rewind, &hw);
+			}
+		}
+
 		clock_tock(&clk, cmd.restrict_speed);
 	}
 	graphics_free(&gfx);

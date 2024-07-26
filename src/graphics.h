@@ -39,5 +39,5 @@ void graphics_init(struct Graphics *gfx, char *window_title);
 void graphics_free(struct Graphics *gfx);
 
 /* Renders a frame (if the display should be rendered). */
-void graphics_render(struct Graphics *gfx, struct Display *display);
+void graphics_render(struct Graphics *gfx, struct Display *display, int use_double_buffering);
 

@@ -12,6 +12,9 @@ struct Commands
 
 	// Pause emulation while this is true
 	int pause;
+	
+	// Rewind to previous emulation states while this is true
+	int rewind;
 };
 
 void commands_init(struct Commands *cmd);

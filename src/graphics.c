@@ -48,7 +48,7 @@ void graphics_free(struct Graphics *gfx)
 	SDL_Quit();
 }
 
-void put_to_buffer(uint8_t *pixels, struct Graphics *gfx)
+void put_to_buffer(uint8_t *pixels, struct Graphics *gfx, int use_double_buffering)
 {
 	for (int y = 0; y < LOGICAL_DISPLAY_H; y++)
 	{
@@ -78,7 +78,7 @@ void put_to_buffer(uint8_t *pixels, struct Graphics *gfx)
 				int prev_value = (prev_byte >> (8-bit-1)) & 0x01;
 
 				// Double buffering: use OR with previous frame to reduce flicker
-				if (CONFIG.DOUBLE_BUFFERING)
+				if (use_double_buffering)
 				{
 					value |= prev_value;
 				}
@@ -97,12 +97,12 @@ void put_to_buffer(uint8_t *pixels, struct Graphics *gfx)
 	}
 }
 
-void graphics_render(struct Graphics *gfx, struct Display *display)
+void graphics_render(struct Graphics *gfx, struct Display *display, int use_double_buffering)
 {
 	if (CONFIG.RENDER_UNCHANGED_FRAMES || display->should_be_rendered)
 	{
-		put_to_buffer(display->pixels, gfx);
-		if (CONFIG.DOUBLE_BUFFERING)
+		put_to_buffer(display->pixels, gfx, use_double_buffering);
+		if (use_double_buffering)
 		{
 			memcpy(gfx->prev_frame.pixels, display->pixels, sizeof(uint8_t) * DISPLAY_SIZE / 8);
 		}

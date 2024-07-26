@@ -6,4 +6,5 @@ void commands_init(struct Commands *cmd)
     cmd->save_state = 0;
     cmd->load_state = 0;
     cmd->pause = 0;
+    cmd->rewind = 0;
 }
